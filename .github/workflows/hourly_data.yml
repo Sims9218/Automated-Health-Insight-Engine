@@ -24,7 +24,7 @@ jobs:
           python scripts/fetch_data.py
           python scripts/predict.py
         env:
-          API_KEY: ${{ secrets.AIR_QUALITY_API_KEY }}
+          API_KEY: ${{secrets.AIR_QUALITY_API_KEY}}
 
       - name: Commit Updated Data
         uses: stefanzweifel/git-auto-commit-action@v4
