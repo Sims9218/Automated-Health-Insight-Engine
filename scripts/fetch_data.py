@@ -10,7 +10,7 @@ LON = "72.8777"
 DATA_PATH = 'data/pollutant_data.csv'
 
 def fetch_air_quality():
-    url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={LAT}&lon={LON}&appid={API_KEY}"
+    url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={LAT}&lon={LON}&appid=f8a67246c69ba428919ace2c52c82cc7"
     
     try:
         response = requests.get(url)
