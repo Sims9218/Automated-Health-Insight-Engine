@@ -74,7 +74,7 @@ def run_engine():
     # E. Data Persistence (Now including Prediction and Error)
     save_data = {
         **raw_aqi, **weather_now, 
-        'timestamp': datetime.now(), 
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M'), 
         'hri': current_hri,
         'predicted_hri': last_prediction,
         'error_pct': error_pct
