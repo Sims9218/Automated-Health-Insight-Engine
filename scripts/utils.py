@@ -5,6 +5,7 @@ LAT, LON = "19.07", "72.87"
 LIMITS = {'pm2_5': 25, 'pm10': 50, 'no2': 40, 'o3': 100, 'co': 10}
 WEIGHTS = {'pm2_5': 0.4, 'pm10': 0.2, 'no2': 0.15, 'o3': 0.15, 'co': 0.1}
 
+API_KEY = os.getenv("API_KEY")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, 'data', 'comprehensive_history.csv')
 FORECAST_PATH = os.path.join(BASE_DIR, 'data', 'forecast_timeline.csv')
