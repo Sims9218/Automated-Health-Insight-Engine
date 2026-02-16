@@ -36,9 +36,15 @@ jobs:
           git config --global user.name "HRI-Bot"
           git config --global user.email "bot@hri-project.com"
           
-          # Only add files if they actually exist to avoid "pathspec" errors
+          # Add the files
           [ -f data/comprehensive_history.csv ] && git add data/comprehensive_history.csv
           [ -f models/specialist_model.pkl ] && git add models/specialist_model.pkl
           
-          # Only commit if there are changes to avoid empty commit errors
-          git diff --staged --quiet || (git commit -m "Automated Data Fetch & Model Update [skip ci]" && git push)
+          # If there are changes, commit, pull latest, and then push
+          if ! git diff --staged --quiet; then
+            git commit -m "Automated Data Fetch & Model Update [skip ci]"
+            git pull --rebase origin main  # <--- THIS IS THE KEY FIX
+            git push
+          else
+            echo "No changes to commit"
+          fi
