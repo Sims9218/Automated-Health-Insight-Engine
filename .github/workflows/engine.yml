@@ -28,22 +28,26 @@ jobs:
 
       - name: Run HRI Engine
         env:
-          API_KEY: ${{ secrets.AIR_QUALITY_API_KEY }}
-        run: python scripts/main_engine.py
+          # This must match the os.getenv("API_KEY") in your script
+          API_KEY: ${{ secrets.AIR_QUALITY_API_KEY }} 
+        run: |
+          # Set PYTHONPATH so scripts can import from each other in the same folder
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/scripts
+          python scripts/main_engine.py
 
       - name: Commit and Push Changes
         run: |
           git config --global user.name "HRI-Bot"
           git config --global user.email "bot@hri-project.com"
           
-          # Add the files
-          [ -f data/comprehensive_history.csv ] && git add data/comprehensive_history.csv
-          [ -f models/specialist_model.pkl ] && git add models/specialist_model.pkl
+          # We add ALL csv files in data/ and the model in models/
+          git add data/*.csv
+          git add models/*.pkl
           
           # If there are changes, commit, pull latest, and then push
           if ! git diff --staged --quiet; then
-            git commit -m "Automated Data Fetch & Model Update [skip ci]"
-            git pull --rebase origin main  # <--- THIS IS THE KEY FIX
+            git commit -m "Automated Data Fetch & Forecast Update [skip ci]"
+            git pull --rebase origin main
             git push
           else
             echo "No changes to commit"
