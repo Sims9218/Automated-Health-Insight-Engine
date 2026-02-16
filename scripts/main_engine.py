@@ -11,8 +11,10 @@ from sklearn.model_selection import train_test_split
 # --- CONFIGURATION ---
 API_KEY = os.getenv("API_KEY")
 LAT, LON = "19.07", "72.87"
-DATA_PATH = 'data/comprehensive_history.csv'
-MODEL_PATH = 'models/specialist_model.pkl'
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_PATH = os.path.join(BASE_DIR, 'data', 'comprehensive_history.csv')
+MODEL_PATH = os.path.join(BASE_DIR, 'models', 'specialist_model.pkl')
 
 LIMITS = {'pm2_5': 25, 'pm10': 50, 'no2': 40, 'o3': 100, 'co': 10}
 WEIGHTS = {'pm2_5': 0.4, 'pm10': 0.2, 'no2': 0.15, 'o3': 0.15, 'co': 0.1}
