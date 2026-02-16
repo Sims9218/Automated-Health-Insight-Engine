@@ -64,7 +64,7 @@ def calculate_hri(aqi_data, weather_data):
 def train_model():
     if not os.path.exists(DATA_PATH): return
     df = pd.read_csv(DATA_PATH)
-    #if len(df) < 48: return 
+    if len(df) < 48: return 
 
     # Feature Engineering: Lagged pollutants + Time + Weather
     pollutants = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
@@ -149,8 +149,8 @@ def run_engine():
     pd.DataFrame([save_data]).to_csv(DATA_PATH, mode='a', index=False, header=not os.path.exists(DATA_PATH))
 
     # Trigger Retrain at Midnight
-    #if datetime.now().hour == 0 and datetime.now().minute < 60: # CHANGED: Adjusted window
-    train_model()
+    if datetime.now().hour == 0 and datetime.now().minute < 60: # CHANGED: Adjusted window
+        train_model()
 
     print(f"\nSTATUS REPORT [{datetime.now().strftime('%H:%M')}]")
     print(f"Current HRI: {current_hri}")
