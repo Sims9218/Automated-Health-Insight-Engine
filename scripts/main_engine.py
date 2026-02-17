@@ -18,8 +18,12 @@ def run_engine():
         aqi_res = requests.get(aqi_url).json()
         raw_aqi = aqi_res['list'][0]['components']
         
-        # FIX: Get the actual observation timestamp from the API
-        observation_time = datetime.fromtimestamp(aqi_res['list'][0]['dt']).strftime('%Y-%m-%d %H:%M')
+        # --- FIX: ROUND ACTUAL TIME TO NEAREST HOUR ---
+        # Get raw timestamp from API
+        dt_object = datetime.fromtimestamp(aqi_res['list'][0]['dt'])
+        # Rounding logic: if > 30 mins, go to next hour, else stay at current hour
+        synced_dt = (dt_object + timedelta(minutes=30)).replace(minute=0, second=0, microsecond=0)
+        observation_time = synced_dt.strftime('%Y-%m-%d %H:%M')
         
         w_res = requests.get(w_url).json()
         weather_now = {
@@ -35,21 +39,23 @@ def run_engine():
     # --- 2. SAVE ACTUAL DATA TO HISTORY (WITH ERROR CALC) ---
     current_hri = calculate_hri(raw_aqi, weather_now)
     
-    # NEW: Fetch the prediction we made earlier for this specific time
     predicted_hri = 0
     error_pct = 0
+    
+    # Match with existing forecast using the NEW rounded timestamp
     if os.path.exists(FORECAST_PATH):
         try:
             df_forecast = pd.read_csv(FORECAST_PATH)
             match = df_forecast[df_forecast['timestamp'] == observation_time]
             if not match.empty:
                 predicted_hri = round(float(match.iloc[0]['hri']), 2)
-                error_pct = round(abs((current_hri - predicted_hri) / current_hri) * 100, 2)
+                if current_hri > 0:
+                    error_pct = round(abs((current_hri - predicted_hri) / current_hri) * 100, 2)
         except: pass
 
     save_data = {
         'timestamp': observation_time,
-        **{k: round(v, 2) for k, v in raw_aqi.items()}, # Round current AQI
+        **{k: round(v, 2) for k, v in raw_aqi.items()}, 
         **weather_now, 
         'hri': current_hri,
         'predicted_hri': predicted_hri,
@@ -69,7 +75,9 @@ def run_engine():
 
         for hour_data in f_res:
             for sub_hour in range(3):
-                f_time = datetime.fromtimestamp(hour_data['dt']) + timedelta(hours=sub_hour)
+                # Ensure forecast time is also perfectly at HH:00
+                f_dt = (datetime.fromtimestamp(hour_data['dt']) + timedelta(hours=sub_hour)).replace(minute=0, second=0, microsecond=0)
+                
                 f_weather = {
                     'temp': round(hour_data['main']['temp'], 2),
                     'humidity': hour_data['main']['humidity'],
@@ -78,8 +86,7 @@ def run_engine():
                     'precip': round(hour_data.get('rain', {}).get('3h', 0) / 3, 2)
                 }
 
-                # Predict and Round
-                X_input = last_pollutants + list(f_weather.values()) + [f_time.hour]
+                X_input = last_pollutants + list(f_weather.values()) + [f_dt.hour]
                 raw_preds = model.predict(np.array(X_input).reshape(1, -1))[0]
                 preds = [round(float(p), 2) for p in raw_preds]
                 
@@ -87,7 +94,7 @@ def run_engine():
                 f_hri = calculate_hri(pred_aqi_dict, f_weather)
 
                 forecast_rows.append({
-                    'timestamp': f_time.strftime('%Y-%m-%d %H:%M'),
+                    'timestamp': f_dt.strftime('%Y-%m-%d %H:%M'),
                     **pred_aqi_dict,
                     **f_weather,
                     'hri': f_hri
