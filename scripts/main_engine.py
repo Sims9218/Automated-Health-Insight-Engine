@@ -68,8 +68,8 @@ def run_engine():
 
                 # Input Order: [Pollutants_Lag] + [temp, humidity, wind, uv, precip] + [hour]
                 X_input = last_pollutants + list(f_weather.values()) + [f_time.hour]
-                preds = model.predict(np.array(X_input).reshape(1, -1))[0]
-                
+                raw_preds = model.predict(np.array(X_input).reshape(1, -1))[0]
+                preds = [round(float(p), 2) for p in raw_preds]
                 # Map predictions back to names
                 pred_aqi_dict = dict(zip(pollutant_list, preds))
                 
