@@ -54,9 +54,9 @@ def run_engine():
         except: pass
 
     save_data = {
-        'timestamp': observation_time,
         **{k: round(v, 2) for k, v in raw_aqi.items()}, 
         **weather_now, 
+        'timestamp': observation_time,
         'hri': current_hri,
         'predicted_hri': predicted_hri,
         'error_pct': error_pct
