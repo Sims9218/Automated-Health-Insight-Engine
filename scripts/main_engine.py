@@ -85,7 +85,7 @@ def run_engine():
                 })
                 
                 # Update lag for the next hour prediction
-                last_pollutants = preds.tolist()
+                last_pollutants = preds
 
         # C. Save the complete 24-hour timeline
         pd.DataFrame(forecast_rows[:24]).to_csv(FORECAST_PATH, index=False)
