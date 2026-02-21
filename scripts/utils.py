@@ -83,34 +83,9 @@ HRI_LEVELS = [
     (float('inf'), "Hazardous", "Avoid all outdoor activity. Stay indoors with air purifiers running."),
 ]
 
-def get_precautions(hri, weather_data):
-    """
-    Returns (metric, base_suggestion, extra_suggestions) based on HRI and weather.
-    Designed to be frontend-ready — just display what you need.
-    """
-    # Determine category
-    metric = "Hazardous"
-    base_suggestion = ""
-    for threshold, label, suggestion in HRI_LEVELS:
+def get_metric(hri):
+    """Returns the HRI category label for a given HRI score."""
+    for threshold, label, _ in HRI_LEVELS:
         if hri < threshold:
-            metric = label
-            base_suggestion = suggestion
-            break
-
-    # Weather-specific add-ons
-    extras = []
-    temp = weather_data.get('temp', 0)
-    uv   = weather_data.get('uv_index', 0)
-    rain = weather_data.get('precip', 0)
-    wind = weather_data.get('wind_speed', 3)
-
-    if temp > 33:
-        extras.append(f"High heat ({temp}°C): Stay hydrated and avoid midday sun.")
-    if uv > 6:
-        extras.append(f"High UV ({uv}): Apply sunscreen and wear sunglasses.")
-    if rain > 0:
-        extras.append("Rain detected: Carry an umbrella.")
-    if wind < 2 and hri > 150:
-        extras.append("Stagnant air: Pollutants are not dispersing. Avoid roads and traffic.")
-
-    return metric, base_suggestion, extras
+            return label
+    return "Hazardous"
