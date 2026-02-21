@@ -69,3 +69,48 @@ def calculate_hri(aqi_data, weather_data):
     # Final Weighted Sum — result is 0-100+ scale
     hri_score = sum((adjusted.get(k, 0) / LIMITS[k]) * WEIGHTS[k] for k in WEIGHTS)
     return round(hri_score * 100, 2)
+
+
+# --- HRI CATEGORY + SUGGESTIONS ---
+# Thresholds calibrated to Mumbai's actual pollution levels.
+# Average day ~270, bad days ~500+.
+HRI_LEVELS = [
+    (75,  "Good",      "Air quality is healthy. No precautions needed."),
+    (150, "Moderate",  "Acceptable air quality. Sensitive individuals should limit prolonged outdoor exposure."),
+    (250, "Poor",      "Wear an N95 mask outdoors. Reduce prolonged exertion."),
+    (350, "Unhealthy", "Wear an N95 mask. Avoid heavy outdoor exercise like running or cycling."),
+    (500, "Severe",    "Minimise all outdoor activity. Keep windows closed."),
+    (float('inf'), "Hazardous", "Avoid all outdoor activity. Stay indoors with air purifiers running."),
+]
+
+def get_precautions(hri, weather_data):
+    """
+    Returns (metric, base_suggestion, extra_suggestions) based on HRI and weather.
+    Designed to be frontend-ready — just display what you need.
+    """
+    # Determine category
+    metric = "Hazardous"
+    base_suggestion = ""
+    for threshold, label, suggestion in HRI_LEVELS:
+        if hri < threshold:
+            metric = label
+            base_suggestion = suggestion
+            break
+
+    # Weather-specific add-ons
+    extras = []
+    temp = weather_data.get('temp', 0)
+    uv   = weather_data.get('uv_index', 0)
+    rain = weather_data.get('precip', 0)
+    wind = weather_data.get('wind_speed', 3)
+
+    if temp > 33:
+        extras.append(f"High heat ({temp}°C): Stay hydrated and avoid midday sun.")
+    if uv > 6:
+        extras.append(f"High UV ({uv}): Apply sunscreen and wear sunglasses.")
+    if rain > 0:
+        extras.append("Rain detected: Carry an umbrella.")
+    if wind < 2 and hri > 150:
+        extras.append("Stagnant air: Pollutants are not dispersing. Avoid roads and traffic.")
+
+    return metric, base_suggestion, extras

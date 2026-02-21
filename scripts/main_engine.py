@@ -6,7 +6,7 @@ import joblib
 from datetime import timedelta
 from utils import (
     DATA_PATH, FORECAST_PATH, MODEL_PATH,
-    calculate_hri, now_ist, ts_to_ist, API_KEY, LAT, LON
+    calculate_hri, get_precautions, now_ist, ts_to_ist, API_KEY, LAT, LON
 )
 
 # Explicit, ordered feature list — must match model_trainer.py exactly.
@@ -59,6 +59,8 @@ def run_engine():
 
     # --- 2. CALCULATE HRI AND SAVE TO HISTORY ---
     current_hri = calculate_hri(raw_aqi, weather_now)
+    metric, base_suggestion, extras = get_precautions(current_hri, weather_now)
+    all_suggestions = " | ".join([base_suggestion] + extras) if extras else base_suggestion
 
     # BUG FIX: CSV column was named 'hri_predict'/'error', not 'predicted_hri'/'error_pct'.
     # Standardised to 'predicted_hri' and 'error_pct' here and in the CSV.
@@ -81,10 +83,12 @@ def run_engine():
     save_data = {
         **{k: round(v, 2) for k, v in raw_aqi.items()},
         **weather_now,
-        'timestamp':     observation_time,
-        'hri':           current_hri,
-        'predicted_hri': predicted_hri,
-        'error_pct':     error_pct,
+        'timestamp':       observation_time,
+        'hri':             current_hri,
+        'metric':          metric,
+        'suggestion':      all_suggestions,
+        'predicted_hri':   predicted_hri,
+        'error_pct':       error_pct,
     }
     history_exists = os.path.exists(DATA_PATH)
     pd.DataFrame([save_data]).to_csv(
@@ -151,12 +155,16 @@ def run_engine():
 
             pred_aqi_dict = dict(zip(POLLUTANTS, preds))
             f_hri = calculate_hri(pred_aqi_dict, f_weather)
+            f_metric, f_base, f_extras = get_precautions(f_hri, f_weather)
+            f_suggestion = " | ".join([f_base] + f_extras) if f_extras else f_base
 
             forecast_rows.append({
-                'timestamp': f_dt.strftime('%Y-%m-%d %H:%M'),
+                'timestamp':  f_dt.strftime('%Y-%m-%d %H:%M'),
                 **pred_aqi_dict,
                 **f_weather,
-                'hri': f_hri,
+                'hri':        f_hri,
+                'metric':     f_metric,
+                'suggestion': f_suggestion,
             })
             last_pollutants = preds  # chain predictions hour by hour
 
@@ -170,6 +178,9 @@ def run_engine():
         train_model()
 
     print(f"STATUS: Engine run complete at {now_ist().strftime('%Y-%m-%d %H:%M IST')}")
+    print(f"HRI: {current_hri} ({metric}) | {base_suggestion}")
+    for e in extras:
+        print(f"  -> {e}")
 
 
 if __name__ == "__main__":
