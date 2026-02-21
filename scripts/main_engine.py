@@ -148,7 +148,7 @@ def run_engine():
                 + [f_weather[c] for c in WEATHER_COLS]
                 + [f_dt.hour]
             )
-            raw_preds = model.predict(np.array(X_input).reshape(1, -1))[0]
+            raw_preds = model.predict(pd.DataFrame([X_input], columns=FEATURE_COLS))[0]
             preds = [round(float(p), 2) for p in raw_preds]
 
             pred_aqi_dict = dict(zip(POLLUTANTS, preds))
