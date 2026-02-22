@@ -9,7 +9,7 @@ from utils import (
     calculate_hri, get_metric, now_ist, ts_to_ist, API_KEY, LAT, LON
 )
 
-# Explicit, ordered feature list — must match model_trainer.py exactly.
+# Explicit, ordered feature list which must match model_trainer.py exactly.
 POLLUTANTS = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
 WEATHER_COLS = ['temp', 'humidity', 'wind_speed', 'uv_index', 'precip']
 FEATURE_COLS = [f'{p}_lag' for p in POLLUTANTS] + WEATHER_COLS + ['hour']
@@ -19,7 +19,7 @@ HISTORY_COLS = [
     'co', 'no', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'nh3',
     'temp', 'humidity', 'wind_speed', 'uv_index', 'precip',
     'timestamp', 'hri', 'metric', 'predicted_hri', 'error_pct'
-]
+]  # to ensure proper format saving
 
 def run_engine():
     # --- 1. FETCH CURRENT ACTUAL DATA ---
