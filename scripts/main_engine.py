@@ -91,9 +91,9 @@ def run_engine():
         **weather_now,
         'timestamp':     observation_time,
         'hri':           current_hri,
-        'metric':        metric,
         'predicted_hri': predicted_hri,
         'error_pct':     error_pct,
+        'metric':        metric,
     }
     history_exists = os.path.exists(DATA_PATH)
     pd.DataFrame([save_data]).reindex(columns=HISTORY_COLS).to_csv(
