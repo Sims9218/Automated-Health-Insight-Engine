@@ -15,6 +15,12 @@ WEATHER_COLS = ['temp', 'humidity', 'wind_speed', 'uv_index', 'precip']
 FEATURE_COLS = [f'{p}_lag' for p in POLLUTANTS] + WEATHER_COLS + ['hour']
 
 
+HISTORY_COLS = [
+    'co', 'no', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'nh3',
+    'temp', 'humidity', 'wind_speed', 'uv_index', 'precip',
+    'timestamp', 'hri', 'metric', 'predicted_hri', 'error_pct'
+]
+
 def run_engine():
     # --- 1. FETCH CURRENT ACTUAL DATA ---
     try:
@@ -89,8 +95,8 @@ def run_engine():
         'error_pct':     error_pct,
     }
     history_exists = os.path.exists(DATA_PATH)
-    pd.DataFrame([save_data]).to_csv(
-        DATA_PATH, mode='a', index=False, header=not history_exists
+    pd.DataFrame([save_data]).reindex(columns=HISTORY_COLS).to_csv(
+    DATA_PATH, mode='a', index=False, header=not history_exists
     )
 
     # --- 3. GENERATE 24-HOUR MULTI-OUTPUT FORECAST ---
