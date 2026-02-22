@@ -72,7 +72,6 @@ def calculate_hri(aqi_data, weather_data):
 
 
 # --- HRI CATEGORY + SUGGESTIONS ---
-# Thresholds calibrated to Mumbai's actual pollution levels.
 # Average day ~270, bad days ~500+.
 HRI_LEVELS = [
     (75,  "Good",      "Air quality is healthy. No precautions needed."),
