@@ -37,7 +37,8 @@ def run_engine():
         raw_aqi_full = aqi_res['list'][0]['components']
 
         # Only keep the 5 pollutants we model
-        raw_aqi = {p: raw_aqi_full[p] for p in POLLUTANTS}
+        raw_aqi = {p: raw_aqi_full[p] for p in POLLUTANTS}  # used for model/HRI
+        raw_aqi_save = {k: round(v, 2) for k, v in raw_aqi_full.items()}  # full data for CSV
 
         # BUG FIX: Convert Unix timestamp to IST, then round to nearest hour.
         dt_ist = ts_to_ist(aqi_res['list'][0]['dt'])
@@ -86,7 +87,7 @@ def run_engine():
             pass
 
     save_data = {
-        **{k: round(v, 2) for k, v in raw_aqi.items()},
+        **{k: round(v, 2) for k, v in raw_aqi_save.items()},
         **weather_now,
         'timestamp':     observation_time,
         'hri':           current_hri,
