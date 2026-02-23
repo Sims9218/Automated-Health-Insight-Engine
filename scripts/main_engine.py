@@ -18,7 +18,7 @@ FEATURE_COLS = [f'{p}_lag' for p in POLLUTANTS] + WEATHER_COLS + ['hour']
 HISTORY_COLS = [
     'co', 'no', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'nh3',
     'temp', 'humidity', 'wind_speed', 'uv_index', 'precip',
-    'timestamp', 'hri', 'metric', 'predicted_hri', 'error_pct'
+    'timestamp', 'hri', 'predicted_hri', 'error_pct', 'metric'
 ]  # to ensure proper format saving
 
 def run_engine():
