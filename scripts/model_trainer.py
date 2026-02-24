@@ -14,7 +14,6 @@ def train_model():
 
     df = pd.read_csv(DATA_PATH)
 
-    # BUG FIX: History had mixed timestamp formats (DD-MM-YYYY and YYYY-MM-DD).
     # Normalise all to YYYY-MM-DD HH:MM before parsing.
     df['timestamp'] = pd.to_datetime(df['timestamp'], dayfirst=True, format='mixed')
 
@@ -23,7 +22,6 @@ def train_model():
         return
 
     pollutants = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
-    # BUG FIX: Explicit, ordered weather columns to guarantee feature order
     # consistency between training and prediction.
     weather_cols = ['temp', 'humidity', 'wind_speed', 'uv_index', 'precip']
 
@@ -37,7 +35,6 @@ def train_model():
     X = df[feature_cols]
     y = df[pollutants]
 
-    # Chronological split — no shuffling for time series
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.1, shuffle=False
     )
