@@ -1,10 +1,10 @@
 import os
 from datetime import datetime, timezone, timedelta
 
-# --- CONFIGURATION ---
+# Coordinates
 LAT, LON = "19.07", "72.87"
 
-# BUG FIX: CO limit was 10 (mg/m³) but OWM returns µg/m³.
+# CO limit was 10 (mg/m³) but OWM returns µg/m³.
 # WHO 8-hour limit is 10 mg/m³ = 10,000 µg/m³.
 # pm2_5, pm10, no2, o3 are already in µg/m³ and their limits are correct.
 LIMITS = {'pm2_5': 25, 'pm10': 50, 'no2': 40, 'o3': 100, 'co': 10000}
@@ -16,7 +16,7 @@ DATA_PATH = os.path.join(BASE_DIR, 'data', 'comprehensive_history.csv')
 FORECAST_PATH = os.path.join(BASE_DIR, 'data', 'forecast_timeline.csv')
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'specialist_model.pkl')
 
-# BUG FIX: GitHub Actions runs on UTC. All timestamps must be in IST (UTC+5:30).
+#UTC TO IST
 IST = timezone(timedelta(hours=5, minutes=30))
 
 def now_ist():
