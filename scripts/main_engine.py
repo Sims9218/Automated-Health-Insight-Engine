@@ -22,7 +22,7 @@ HISTORY_COLS = [
 ]  # to ensure proper format saving
 
 def run_engine():
-    # --- 1. FETCH CURRENT ACTUAL DATA ---
+    #  FETCH CURRENT ACTUAL DATA 
     try:
         aqi_url = (
             f"http://api.openweathermap.org/data/2.5/air_pollution"
@@ -64,7 +64,7 @@ def run_engine():
         print(f"API Error: {e}")
         return
 
-    # --- 2. CALCULATE HRI AND SAVE TO HISTORY ---
+    #  CALCULATE HRI AND SAVE TO HISTORY 
     current_hri = calculate_hri(raw_aqi, weather_now)
     metric = get_metric(current_hri)
 
@@ -100,7 +100,7 @@ def run_engine():
     DATA_PATH, mode='a', index=False, header=not history_exists
     )
 
-    # --- 3. GENERATE 24-HOUR MULTI-OUTPUT FORECAST ---
+    #  GENERATE 24-HOUR MULTI-OUTPUT FORECAST 
     if os.path.exists(MODEL_PATH):
         model = joblib.load(MODEL_PATH)
 
