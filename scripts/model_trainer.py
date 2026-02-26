@@ -1,10 +1,11 @@
 import os
 import pandas as pd
 import joblib
-from utils import DATA_PATH, MODEL_PATH, now_ist
+from utils import (DATA_PATH,MODEL_DIR,LATEST_MODEL_PATH,REGISTRY_PATH,now_ist)
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
 
 # --- MODEL TRAINER ---
 def train_model():
@@ -43,10 +44,60 @@ def train_model():
         RandomForestRegressor(n_estimators=100, max_depth=6, random_state=42)
     )
     model.fit(X_train, y_train)
+    
+    # Evaluate NEW model
+    new_preds = model.predict(X_test)
+    new_score = mean_absolute_error(y_test, new_preds)
 
-    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
-    joblib.dump(model, MODEL_PATH)
-    print(f"Model retrained at {now_ist().strftime('%Y-%m-%d %H:%M IST')}. Data points: {len(df)}")
+    # Create folders
+    os.makedirs(os.path.dirname(LATEST_MODEL_PATH), exist_ok=True)
+    os.makedirs(MODEL_DIR, exist_ok=True)
 
+    # Create unique model version name
+    model_version = now_ist().strftime("%Y%m%d_%H%M%S")
+    version_path = os.path.join(
+        MODEL_DIR,
+        f"model_{model_version}.pkl"
+    )
+
+    # Save versioned model
+    joblib.dump(model, version_path)
+    
+    # Compare with existing (production) model
+    if os.path.exists(LATEST_MODEL_PATH):
+        old_model = joblib.load(LATEST_MODEL_PATH)
+        old_preds = old_model.predict(X_test)
+        old_score = mean_absolute_error(y_test, old_preds)
+    else:
+        old_score = float("inf")
+
+    # Promote only if better
+    if new_score < old_score:
+        print(f"New model improved MAE: {old_score:.4f} → {new_score:.4f}")
+        joblib.dump(model, LATEST_MODEL_PATH)
+    else:
+        print(f"Model NOT promoted. Old MAE: {old_score:.4f} | New MAE: {new_score:.4f}")
+
+    print(
+        f"Model retrained at {now_ist().strftime('%Y-%m-%d %H:%M IST')}. "
+        f"Data points: {len(df)}"
+    )
+
+    # Save registry entry
+    registry_row = {
+        "version": model_version,
+        "model_path": version_path,
+        "trained_at": now_ist().strftime('%Y-%m-%d %H:%M'),
+        "data_points": len(df),
+        "mae": new_score,
+        "promote":new_score<old_score
+    }
+
+    pd.DataFrame([registry_row]).to_csv(
+        REGISTRY_PATH,
+        mode="a",
+        index=False,
+        header=not os.path.exists(REGISTRY_PATH)
+    )
 if __name__ == "__main__":
     train_model()
