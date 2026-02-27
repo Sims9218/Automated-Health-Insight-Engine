@@ -16,6 +16,7 @@ DATA_PATH = os.path.join(BASE_DIR, 'data', 'comprehensive_history.csv')
 FORECAST_PATH = os.path.join(BASE_DIR, 'data', 'forecast_timeline.csv')
 MODEL_DIR = os.path.join(BASE_DIR, 'models', 'versions')
 LATEST_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'specialist_model.pkl')
+MODEL_PATH = LATEST_MODEL_PATH
 REGISTRY_PATH = os.path.join(BASE_DIR, 'models', 'model_registry.csv')
 
 #UTC TO IST
