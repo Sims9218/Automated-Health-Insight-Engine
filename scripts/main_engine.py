@@ -157,7 +157,9 @@ def run_engine():
                 'error_pct':     0.0,
                 'metric':        get_metric(f_hri)
             }
+            
             last_pollutants = preds 
+
         final_forecast_rows = []
         intervals = [3, 6, 9, 12, 15, 18, 21, 24]
         
@@ -171,7 +173,7 @@ def run_engine():
             FORECAST_PATH, index=False
         )
         
-        print(f"8-Part Forecast saved: {len(final_forecast_rows)} rows in standard format.")
+        print(f"Forecast updated: {len(final_forecast_rows)} rows saved to {FORECAST_PATH}.")
 
     # Retrain model once a day at midnight IST
     now = now_ist()
