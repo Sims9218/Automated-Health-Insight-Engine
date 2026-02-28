@@ -117,11 +117,11 @@ def run_engine():
         for slot in f_slots:
             slot_dt = ts_to_ist(slot['dt']).replace(minute=0, second=0, microsecond=0)
             slot_weather[slot_dt] = {
-                'temp': round(slot['main']['temp'], 2),
-                'humidity': slot['main']['humidity'],
-                'wind_speed': round(slot['wind']['speed'], 2),
-                'uv_index': 0,
-                'precip': round(slot.get('rain', {}).get('3h', 0) / 3, 2),
+                'temp':        round(slot['main']['temp'], 2),
+                'humidity':    slot['main']['humidity'],
+                'wind_speed':  round(slot['wind']['speed'], 2),
+                'uv_index':    0,
+                'precip':      round(slot.get('rain', {}).get('3h', 0) / 3, 2),
             }
 
         def get_weather_for_hour(dt):
@@ -139,6 +139,7 @@ def run_engine():
 
         for i, f_dt in enumerate(forecast_hours, 1):
             f_weather = get_weather_for_hour(f_dt)
+            
             X_input = last_pollutants + [f_weather[c] for c in WEATHER_COLS] + [f_dt.hour]
             
             raw_preds = model.predict(pd.DataFrame([X_input], columns=FEATURE_COLS))[0]
@@ -148,28 +149,29 @@ def run_engine():
             f_hri = calculate_hri(pred_aqi_dict, f_weather)
             
             hourly_results[i] = {
-                'timestamp': f_dt.strftime('%Y-%m-%d %H:%M'),
-                'hri': f_hri,
-                'metric': get_metric(f_hri)
+                **{p: round(preds[j], 2) for j, p in enumerate(POLLUTANTS)},
+                **f_weather,
+                'timestamp':     f_dt.strftime('%Y-%m-%d %H:%M'),
+                'hri':           f_hri,
+                'predicted_hri': 0.0, 
+                'error_pct':     0.0,
+                'metric':        get_metric(f_hri)
             }
             last_pollutants = preds 
-
-        divided_forecast = []
+        final_forecast_rows = []
         intervals = [3, 6, 9, 12, 15, 18, 21, 24]
         
-        for idx, t in enumerate(intervals, 1):
-            part_data = {
-                'part': idx,
-                'interval_hour': t,
-                'timestamp_t': hourly_results[t]['timestamp'],
-                'hri_prev': hourly_results.get(t-1, {}).get('hri'),
-                'hri_target': hourly_results[t]['hri'],
-                'hri_next': hourly_results.get(t+1, {}).get('hri') # Returns None for 24+1
-            }
-            divided_forecast.append(part_data)
+        for t in intervals:
+            for offset in [-1, 0, 1]:
+                target_idx = t + offset
+                if target_idx in hourly_results:
+                    final_forecast_rows.append(hourly_results[target_idx])
 
-        pd.DataFrame(divided_forecast).to_csv(FORECAST_PATH, index=False)
-        print(f"8-Part Forecast (24h limit) saved to {FORECAST_PATH}")
+        pd.DataFrame(final_forecast_rows).reindex(columns=HISTORY_COLS).to_csv(
+            FORECAST_PATH, index=False
+        )
+        
+        print(f"8-Part Forecast saved: {len(final_forecast_rows)} rows in standard format.")
 
     # Retrain model once a day at midnight IST
     now = now_ist()
