@@ -211,3 +211,11 @@ __marimo__/
 models/*.pkl
 models/model_registry.csv
 models/versions/*.pkl
+
+
+# Project data 
+data/*.db
+data/*.csv
+
+# Keep folder structure
+!data/.gitkeep

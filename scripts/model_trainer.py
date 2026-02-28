@@ -6,15 +6,25 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
+import sqlite3
+from utils import DB_PATH
 
 # --- MODEL TRAINER ---
 def train_model():
-    if not os.path.exists(DATA_PATH):
-        print("No history data found, skipping training.")
+    conn = sqlite3.connect(DB_PATH)
+    df = pd.read_sql("""
+    SELECT city, timestamp,
+    pm2_5, pm10, no2, o3, co,
+    temp, humidity, wind_speed, uv_index, precip,
+    hri, predicted_hri, error_pct, metric
+    FROM history
+    """, conn)
+    conn.close()
+    
+    if df.empty:
+        print("No data in DB, skipping training.")
         return
-
-    df = pd.read_csv(DATA_PATH)
-
+    
     # Normalise all to YYYY-MM-DD HH:MM before parsing.
     df['timestamp'] = pd.to_datetime(df['timestamp'], dayfirst=True, format='mixed')
 
@@ -25,9 +35,11 @@ def train_model():
     pollutants = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
     # consistency between training and prediction.
     weather_cols = ['temp', 'humidity', 'wind_speed', 'uv_index', 'precip']
-
+    
+    df = df.sort_values(["city", "timestamp"])
     for p in pollutants:
-        df[f'{p}_lag'] = df[p].shift(1)
+        df[f'{p}_lag'] = df.groupby("city")[p].shift(1)
+        
 
     df['hour'] = df['timestamp'].dt.hour
     df = df.dropna()
@@ -90,7 +102,7 @@ def train_model():
         "trained_at": now_ist().strftime('%Y-%m-%d %H:%M'),
         "data_points": len(df),
         "mae": new_score,
-        "promote":new_score<old_score
+        "promoted":new_score<old_score
     }
 
     pd.DataFrame([registry_row]).to_csv(

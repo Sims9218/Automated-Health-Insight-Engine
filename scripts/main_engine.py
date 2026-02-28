@@ -5,9 +5,10 @@ import numpy as np
 import joblib
 from datetime import timedelta
 from utils import (
-    DATA_PATH, FORECAST_PATH, MODEL_PATH,
-    calculate_hri, get_metric, now_ist, ts_to_ist, API_KEY, LAT, LON
+    DATA_PATH, FORECAST_PATH, MODEL_PATH, DB_PATH,
+    calculate_hri, get_metric, now_ist, ts_to_ist, API_KEY, LAT, LON, CITY
 )
+import sqlite3
 
 # Explicit, ordered feature list which must match model_trainer.py exactly.
 POLLUTANTS = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
@@ -16,6 +17,7 @@ FEATURE_COLS = [f'{p}_lag' for p in POLLUTANTS] + WEATHER_COLS + ['hour']
 
 
 HISTORY_COLS = [
+    'city',
     'co', 'no', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'nh3',
     'temp', 'humidity', 'wind_speed', 'uv_index', 'precip',
     'timestamp', 'hri', 'predicted_hri', 'error_pct', 'metric'
@@ -94,11 +96,42 @@ def run_engine():
         'predicted_hri': predicted_hri,
         'error_pct':     error_pct,
         'metric':        metric,
+        'city':          CITY
     }
-    history_exists = os.path.exists(DATA_PATH)
-    pd.DataFrame([save_data]).reindex(columns=HISTORY_COLS).to_csv(
-    DATA_PATH, mode='a', index=False, header=not history_exists
-    )
+    
+    
+    #History DB TABLE
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    cur.execute("""
+    INSERT INTO history (
+        city, timestamp,
+        pm2_5, pm10, no2, o3, co,
+        temp, humidity, wind_speed, uv_index, precip,
+        hri, predicted_hri, error_pct, metric
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        save_data['city'],
+        save_data['timestamp'],
+        save_data['pm2_5'],
+        save_data['pm10'],
+        save_data['no2'],
+        save_data['o3'],
+        save_data['co'],
+        save_data['temp'],
+        save_data['humidity'],
+        save_data['wind_speed'],
+        save_data['uv_index'],
+        save_data['precip'],
+        save_data['hri'],
+        save_data['predicted_hri'],
+        save_data['error_pct'],
+        save_data['metric']
+    ))
+
+    conn.commit()
+    conn.close()
 
     #  GENERATE 24-HOUR MULTI-OUTPUT FORECAST 
     if os.path.exists(MODEL_PATH):
