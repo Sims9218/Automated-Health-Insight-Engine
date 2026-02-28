@@ -100,42 +100,33 @@ def run_engine():
     DATA_PATH, mode='a', index=False, header=not history_exists
     )
 
-    #  GENERATE 24-HOUR MULTI-OUTPUT FORECAST 
+#  GENERATE 24-HOUR MULTI-OUTPUT FORECAST (8 PARTS)
     if os.path.exists(MODEL_PATH):
         model = joblib.load(MODEL_PATH)
 
-        # OWM /forecast gives 3-hourly slots. We need 24 hourly points.
-        # BUG FIX: The old code added sub_hour offsets on top of each 3-hour
-        # slot, causing timestamps like slot1+2h and slot2+0h to overlap.
-        # Fix: build a clean hourly sequence by linear-interpolating weather
-        # between OWM slots, starting from hour+1 after the current observation.
         f_url = (
             f"https://api.openweathermap.org/data/2.5/forecast"
             f"?lat={LAT}&lon={LON}&appid={API_KEY}&units=metric"
         )
-        f_slots = requests.get(f_url).json()['list'][:9]  # 9 slots = 27h coverage
+        f_slots = requests.get(f_url).json()['list'][:9] 
 
-        # Build a clean hour-by-hour sequence (IST) for the next 24 hours
         start_hour = synced_dt + timedelta(hours=1)
         forecast_hours = [start_hour + timedelta(hours=i) for i in range(24)]
 
-        # Build a lookup: slot_timestamp (IST, rounded) -> weather dict
         slot_weather = {}
         for slot in f_slots:
             slot_dt = ts_to_ist(slot['dt']).replace(minute=0, second=0, microsecond=0)
             slot_weather[slot_dt] = {
-                'temp':       round(slot['main']['temp'], 2),
-                'humidity':   slot['main']['humidity'],
+                'temp': round(slot['main']['temp'], 2),
+                'humidity': slot['main']['humidity'],
                 'wind_speed': round(slot['wind']['speed'], 2),
-                'uv_index':   0,   # not available in /forecast; set per hour below
-                'precip':     round(slot.get('rain', {}).get('3h', 0) / 3, 2),
+                'uv_index': 0,
+                'precip': round(slot.get('rain', {}).get('3h', 0) / 3, 2),
             }
 
         def get_weather_for_hour(dt):
-            """Find the closest slot weather for a given hour."""
             closest = min(slot_weather.keys(), key=lambda s: abs((s - dt).total_seconds()))
             w = slot_weather[closest].copy()
-            # Simple UV estimate: 0 at night, scaled by hour during day
             h = dt.hour
             if 6 <= h <= 18:
                 w['uv_index'] = round(max(0, 6 * np.sin(np.pi * (h - 6) / 12)), 1)
@@ -144,35 +135,41 @@ def run_engine():
             return w
 
         last_pollutants = [raw_aqi[p] for p in POLLUTANTS]
-        forecast_rows = []
+        hourly_results = {} 
 
-        for f_dt in forecast_hours:
+        for i, f_dt in enumerate(forecast_hours, 1):
             f_weather = get_weather_for_hour(f_dt)
-
-            # Feature vector — order must match FEATURE_COLS / training exactly
-            X_input = (
-                last_pollutants
-                + [f_weather[c] for c in WEATHER_COLS]
-                + [f_dt.hour]
-            )
+            X_input = last_pollutants + [f_weather[c] for c in WEATHER_COLS] + [f_dt.hour]
+            
             raw_preds = model.predict(pd.DataFrame([X_input], columns=FEATURE_COLS))[0]
             preds = [round(float(p), 2) for p in raw_preds]
 
             pred_aqi_dict = dict(zip(POLLUTANTS, preds))
             f_hri = calculate_hri(pred_aqi_dict, f_weather)
-            f_metric = get_metric(f_hri)
-
-            forecast_rows.append({
+            
+            hourly_results[i] = {
                 'timestamp': f_dt.strftime('%Y-%m-%d %H:%M'),
-                **pred_aqi_dict,
-                **f_weather,
-                'hri':       f_hri,
-                'metric':    f_metric,
-            })
-            last_pollutants = preds  # chain predictions hour by hour
+                'hri': f_hri,
+                'metric': get_metric(f_hri)
+            }
+            last_pollutants = preds 
 
-        pd.DataFrame(forecast_rows).to_csv(FORECAST_PATH, index=False)
-        print(f"Forecast saved: {len(forecast_rows)} hours from {forecast_rows[0]['timestamp']} IST")
+        divided_forecast = []
+        intervals = [3, 6, 9, 12, 15, 18, 21, 24]
+        
+        for idx, t in enumerate(intervals, 1):
+            part_data = {
+                'part': idx,
+                'interval_hour': t,
+                'timestamp_t': hourly_results[t]['timestamp'],
+                'hri_prev': hourly_results.get(t-1, {}).get('hri'),
+                'hri_target': hourly_results[t]['hri'],
+                'hri_next': hourly_results.get(t+1, {}).get('hri') # Returns None for 24+1
+            }
+            divided_forecast.append(part_data)
+
+        pd.DataFrame(divided_forecast).to_csv(FORECAST_PATH, index=False)
+        print(f"8-Part Forecast (24h limit) saved to {FORECAST_PATH}")
 
     # Retrain model once a day at midnight IST
     now = now_ist()
