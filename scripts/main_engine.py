@@ -80,13 +80,9 @@ def run_engine():
     if os.path.exists(MODEL_PATH):
         model = joblib.load(MODEL_PATH)
         
-        # OWM /forecast gives 3-hourly slots. We need 24 hourly points.
-        # BUG FIX: The old code added sub_hour offsets on top of each 3-hour
-        # slot, causing timestamps like slot1+2h and slot2+0h to overlap.
-        # Fix: build a clean hourly sequence by linear-interpolating weather
-        # between OWM slots, starting from hour+1 after the current observation.
         f_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={LAT}&lon={LON}&appid={API_KEY}&units=metric"
-        f_slots = requests.get(f_url).json()['list'][:24] # 24 slots = 72 hours coverage
+        f_res = requests.get(f_url).json()
+        f_slots = f_res.get('list', [])[:24] 
 
         slot_weather = {}
         for slot in f_slots:
@@ -106,13 +102,12 @@ def run_engine():
             w['uv_index'] = round(max(0, 6 * np.sin(np.pi * (h - 6) / 12)), 1) if 6 <= h <= 18 else 0
             return w
 
-        tomorrow_date = (synced_dt + timedelta(days=1)).date()
+        tomorrow_start = (synced_dt + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
         key_hours = [0, 3, 6, 9, 12, 15, 18, 21]
         
-
         target_timestamps = []
         for kh in key_hours:
-            base_dt = datetime.combine(tomorrow_date, datetime.min.time()) + timedelta(hours=kh)
+            base_dt = tomorrow_start + timedelta(hours=kh)
             target_timestamps.extend([
                 (base_dt - timedelta(hours=1)).strftime('%Y-%m-%d %H:%M'),
                 base_dt.strftime('%Y-%m-%d %H:%M'),
@@ -120,7 +115,7 @@ def run_engine():
             ])
         target_timestamps = sorted(list(set(target_timestamps)))
 
-        max_target_dt = datetime.strptime(target_timestamps[-1], '%Y-%m-%d %H:%M')
+        max_target_dt = datetime.strptime(target_timestamps[-1], '%Y-%m-%d %H:%M').replace(tzinfo=synced_dt.tzinfo)
         hours_to_predict = int((max_target_dt - synced_dt).total_seconds() // 3600)
 
         last_pollutants = [raw_aqi[p] for p in POLLUTANTS]
@@ -146,7 +141,7 @@ def run_engine():
                     'metric': get_metric(f_hri),
                 })
             
-            last_pollutants = preds
+            last_pollutants = preds 
 
         pd.DataFrame(forecast_rows).to_csv(FORECAST_PATH, index=False)
         print(f"Next-day forecast saved: {len(forecast_rows)} specific samples for tomorrow.")
