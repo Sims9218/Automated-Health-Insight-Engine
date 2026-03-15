@@ -51,6 +51,15 @@ models/*.pkl
 models/model_registry.csv
 models/versions/*.pkl
 
+<<<<<<< HEAD
+
+# Project data 
+data/*.db
+data/*.csv
+
+# Keep folder structure
+!data/.gitkeep
+=======
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -61,3 +70,4 @@ models/versions/*.pkl
 *.njsproj
 *.sln
 *.sw?
+>>>>>>> 22b6109dc46e3ef85d8939eae5f2c64641e485a3

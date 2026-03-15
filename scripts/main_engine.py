@@ -5,20 +5,17 @@ import numpy as np
 import joblib
 from datetime import timedelta, datetime
 from utils import (
-    DATA_PATH, FORECAST_PATH, MODEL_PATH,
-    calculate_hri, get_metric, now_ist, ts_to_ist, API_KEY, LAT, LON
+    MODEL_PATH,
+    calculate_hri, get_metric, now_ist, ts_to_ist, API_KEY, LAT, LON, CITY, supabase
 )
+
 
 # Explicit, ordered feature list which must match model_trainer.py exactly.
 POLLUTANTS = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
 WEATHER_COLS = ['temp', 'humidity', 'wind_speed', 'uv_index', 'precip']
 FEATURE_COLS = [f'{p}_lag' for p in POLLUTANTS] + WEATHER_COLS + ['hour']
 
-HISTORY_COLS = [
-    'co', 'no', 'no2', 'o3', 'so2', 'pm2_5', 'pm10', 'nh3',
-    'temp', 'humidity', 'wind_speed', 'uv_index', 'precip',
-    'timestamp', 'hri', 'predicted_hri', 'error_pct', 'metric'
-] # to ensure proper format saving
+
 
 def run_engine():
     # FETCH CURRENT ACTUAL DATA
@@ -54,15 +51,20 @@ def run_engine():
     metric = get_metric(current_hri)
     predicted_hri, error_pct = 0.0, 0.0
 
-    if os.path.exists(FORECAST_PATH):
+    if supabase:
         try:
-            df_forecast = pd.read_csv(FORECAST_PATH)
-            match = df_forecast[df_forecast['timestamp'] == observation_time]
-            if not match.empty:
-                predicted_hri = round(float(match.iloc[0]['hri']), 2)
+            response = supabase.table("forecast") \
+                .select("hri") \
+                .eq("timestamp", observation_time) \
+                .execute()
+
+            if response.data:
+                predicted_hri = round(float(response.data[0]["hri"]), 2)
                 if current_hri > 0:
                     error_pct = round(abs((current_hri - predicted_hri) / current_hri) * 100, 2)
-        except: pass
+
+        except Exception as e:
+            print(f"Forecast lookup failed: {e}")
 
     save_data = {
         **{k: round(v, 2) for k, v in raw_aqi_save.items()},
@@ -70,11 +72,33 @@ def run_engine():
         'timestamp': observation_time,
         'hri': current_hri,
         'predicted_hri': predicted_hri,
-        'error_pct': error_pct,
-        'metric': metric,
+        'error_pct':     error_pct,
+        'metric':        metric,
+        'city':          CITY
     }
-    history_exists = os.path.exists(DATA_PATH)
-    pd.DataFrame([save_data]).reindex(columns=HISTORY_COLS).to_csv(DATA_PATH, mode='a', index=False, header=not history_exists)
+    
+    
+    #History DB TABLE
+  # Save to Supabase
+    supabase.table("history").insert({
+        "city": save_data['city'],
+        "timestamp": save_data['timestamp'],
+        "pm2_5": save_data['pm2_5'],
+        "pm10": save_data['pm10'],
+        "no2": save_data['no2'],
+        "o3": save_data['o3'],
+        "co": save_data['co'],
+        "temp": save_data['temp'],
+        "humidity": save_data['humidity'],
+        "wind_speed": save_data['wind_speed'],
+        "uv_index": save_data['uv_index'],
+        "precip": save_data['precip'],
+        "hri": save_data['hri'],
+        "predicted_hri": save_data['predicted_hri'],
+        "error_pct": save_data['error_pct'],
+        "metric": save_data['metric']
+    }).execute()
+
 
     # GENERATE 24-HOUR MULTI-OUTPUT FORECAST 
     if os.path.exists(MODEL_PATH):
@@ -143,8 +167,12 @@ def run_engine():
             
             last_pollutants = preds 
 
-        pd.DataFrame(forecast_rows).to_csv(FORECAST_PATH, index=False)
-        print(f"Next-day forecast saved: {len(forecast_rows)} specific samples for tomorrow.")
+        if supabase and forecast_rows:
+            try:
+                supabase.table("forecast").insert(forecast_rows).execute()
+                print(f"Next-day forecast saved to Supabase: {len(forecast_rows)} rows.")
+            except Exception as e:
+                print(f"Failed to save forecast to Supabase: {e}")
 
     now = now_ist()
     if now.hour == 0 and now.minute < 60:
