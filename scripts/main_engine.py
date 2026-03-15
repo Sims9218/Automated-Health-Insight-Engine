@@ -120,7 +120,7 @@ def run_engine():
 
     if supabase:
         try:
-            supabase.table("forecast").delete().gte("timestamp", "1900-01-01").execute()
+            supabase.table("forecast").delete().not_.is_("timestamp", None).execute()
             print("Old forecasts cleared.")
         except Exception as e:
             print(f"Forecast clear failed: {e}")
