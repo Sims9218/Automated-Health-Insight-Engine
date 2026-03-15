@@ -168,12 +168,13 @@ def run_engine():
                     pred_aqi_dict = dict(zip(POLLUTANTS, preds))
                     f_hri = calculate_hri(pred_aqi_dict, f_weather)
                     forecast_rows.append({
-                        'city':CITY,
+                        
                         'timestamp': f_dt_str,
                         **pred_aqi_dict,
                         **f_weather,
                         'hri': f_hri,
                         'metric': get_metric(f_hri),
+                        'city':CITY
                     })
                 
                 last_pollutants = preds 
