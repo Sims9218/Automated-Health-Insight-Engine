@@ -1,4 +1,5 @@
 # Automated-Public-Health-Insight-Engine
+
 An end-to-end MLOps pipeline that fetches real-time air quality data, calculates a custom Health Risk Index (HRI), and uses a self-correcting Machine Learning model to forecast health risks and suggest precautions.
 
 Key Features
@@ -10,6 +11,6 @@ Key Features
 
 Tech Stack
 Language: Python 3.9+
-ML Framework: #edit it
+ML Framework: XGBoost
 Automation: GitHub Actions (Cron scheduling)
 Data Handling: Pandas, Joblib

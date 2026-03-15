@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timezone, timedelta
-
+from supabase import create_client
 # Coordinates
 LAT, LON = "19.07", "72.87"
 
@@ -12,14 +12,22 @@ WEIGHTS = {'pm2_5': 0.4, 'pm10': 0.2, 'no2': 0.15, 'o3': 0.15, 'co': 0.1}
 
 API_KEY = os.getenv("API_KEY")
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_PATH = os.path.join(BASE_DIR, 'data', 'comprehensive_history.csv')
-FORECAST_PATH = os.path.join(BASE_DIR, 'data', 'forecast_timeline.csv')
 MODEL_DIR = os.path.join(BASE_DIR, 'models', 'versions')
 LATEST_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'specialist_model.pkl')
 MODEL_PATH=LATEST_MODEL_PATH
 REGISTRY_PATH = os.path.join(BASE_DIR, 'models', 'model_registry.csv')
-DB_PATH = os.path.join(BASE_DIR, 'data', 'health_engine.db')
 CITY = "Mumbai"
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+supabase = None
+
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    except Exception as e:
+        print(f"Supabase connection failed: {e}")
 
 #UTC TO IST
 IST = timezone(timedelta(hours=5, minutes=30))
