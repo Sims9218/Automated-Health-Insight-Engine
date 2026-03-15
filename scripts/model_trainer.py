@@ -1,13 +1,11 @@
 import os
 import pandas as pd
 import joblib
-from utils import (DATA_PATH,MODEL_DIR,LATEST_MODEL_PATH,REGISTRY_PATH,now_ist)
+from utils import (MODEL_DIR,LATEST_MODEL_PATH,REGISTRY_PATH,now_ist)
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
-import sqlite3
-from utils import DB_PATH
 from utils import supabase
 
 # --- MODEL TRAINER ---

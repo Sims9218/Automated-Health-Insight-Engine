@@ -25,7 +25,7 @@ jobs:
 
       # Ensure folders exist so Git doesn't complain
       - name: Create Folders
-        run: mkdir -p models
+        run: mkdir -p models/versions
 
       - name: Run HRI Engine
         env:
