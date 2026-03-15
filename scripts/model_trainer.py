@@ -8,22 +8,18 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 import sqlite3
 from utils import DB_PATH
+from utils import supabase
 
 # --- MODEL TRAINER ---
 def train_model():
-    conn = sqlite3.connect(DB_PATH)
-    df = pd.read_sql("""
-    SELECT city, timestamp,
-    pm2_5, pm10, no2, o3, co,
-    temp, humidity, wind_speed, uv_index, precip,
-    hri, predicted_hri, error_pct, metric
-    FROM history
-    """, conn)
-    conn.close()
-    
+    # Fetch training data from Supabase
+    response = supabase.table("history").select("*").order("timestamp").execute()
+    df = pd.DataFrame(response.data)
+
     if df.empty:
-        print("No data in DB, skipping training.")
+        print("No data in Supabase, skipping training.")
         return
+    
     
     # Normalise all to YYYY-MM-DD HH:MM before parsing.
     df['timestamp'] = pd.to_datetime(df['timestamp'], dayfirst=True, format='mixed')

@@ -21,16 +21,18 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install pandas numpy requests scikit-learn joblib
+          pip install pandas numpy requests scikit-learn joblib supabase
 
       # Ensure folders exist so Git doesn't complain
       - name: Create Folders
-        run: mkdir -p data models
+        run: mkdir -p models
 
       - name: Run HRI Engine
         env:
           # This must match the os.getenv("API_KEY") in your script
           API_KEY: ${{ secrets.AIR_QUALITY_API_KEY }} 
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           # Set PYTHONPATH so scripts can import from each other in the same folder
           export PYTHONPATH=$PYTHONPATH:$(pwd)/scripts
@@ -42,7 +44,6 @@ jobs:
           git config --global user.email "bot@hri-project.com"
           
           # We add ALL csv files in data/ and the model in models/
-          git add data/*.csv
           git add models/*.pkl
           
           # If there are changes, commit, pull latest, and then push
