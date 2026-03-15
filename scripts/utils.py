@@ -2,8 +2,6 @@ import os
 from datetime import datetime, timezone, timedelta
 from supabase import create_client
 # Coordinates
-LAT, LON = "19.07", "72.87"
-
 # CO limit was 10 (mg/m³) but OWM returns µg/m³.
 # WHO 8-hour limit is 10 mg/m³ = 10,000 µg/m³.
 # pm2_5, pm10, no2, o3 are already in µg/m³ and their limits are correct.
@@ -16,7 +14,6 @@ MODEL_DIR = os.path.join(BASE_DIR, 'models', 'versions')
 LATEST_MODEL_PATH = os.path.join(BASE_DIR, 'models', 'specialist_model.pkl')
 MODEL_PATH=LATEST_MODEL_PATH
 REGISTRY_PATH = os.path.join(BASE_DIR, 'models', 'model_registry.csv')
-CITY = "Mumbai"
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
