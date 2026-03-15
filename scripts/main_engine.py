@@ -23,6 +23,9 @@ def run_engine():
             model = joblib.load(MODEL_PATH)
             
     cities = supabase.table("cities").select("*").execute().data
+    city_state = {}
+
+
     
     # FETCH CURRENT ACTUAL DATA
     for row in cities:
@@ -40,6 +43,10 @@ def run_engine():
 
             dt_ist = ts_to_ist(aqi_res['list'][0]['dt'])
             synced_dt = (dt_ist + timedelta(minutes=30)).replace(minute=0, second=0, microsecond=0)
+            city_state[CITY] = {
+                "raw_aqi": raw_aqi,
+                "synced_dt": synced_dt
+            }
             observation_time = synced_dt.strftime('%Y-%m-%d %H:%M')
 
             w_res = requests.get(w_url).json()
@@ -55,7 +62,7 @@ def run_engine():
         except Exception as e:
             print(f"API Error for {CITY}: {e}")
             continue
-
+    
         # CALCULATE HRI AND SAVE TO HISTORY
         current_hri = calculate_hri(raw_aqi, weather_now)
         metric = get_metric(current_hri)
@@ -109,9 +116,26 @@ def run_engine():
             "error_pct": save_data['error_pct'],
             "metric": save_data['metric']
         }).execute()
+        print(f"HRI: {current_hri} ({metric})")
 
-
+    if supabase:
+        try:
+            supabase.table("forecast").delete().gte("timestamp", "1900-01-01").execute()
+            print("Old forecasts cleared.")
+        except Exception as e:
+            print(f"Forecast clear failed: {e}")
         # GENERATE 24-HOUR MULTI-OUTPUT FORECAST 
+    for row in cities:
+
+        CITY = row["city"]
+        LAT = row["lat"]
+        LON = row["lon"]
+
+        if CITY not in city_state:
+            continue
+        
+        raw_aqi = city_state[CITY]["raw_aqi"]
+        synced_dt = city_state[CITY]["synced_dt"]
         if model:
             
             f_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={LAT}&lon={LON}&appid={API_KEY}&units=metric"
@@ -181,9 +205,6 @@ def run_engine():
 
             if supabase and forecast_rows:
                 try:
-                    # Delete old forecasts for this city
-                    supabase.table("forecast").delete().eq("city", CITY).execute()
-
                     # Insert fresh forecast
                     supabase.table("forecast").insert(forecast_rows).execute()
 
@@ -194,7 +215,6 @@ def run_engine():
         
 
         print(f"{CITY} run complete at {now_ist().strftime('%Y-%m-%d %H:%M IST')}")
-        print(f"HRI: {current_hri} ({metric})")
     now = now_ist()
     if now.hour == 0 and now.minute < 60:
         from model_trainer import train_model
