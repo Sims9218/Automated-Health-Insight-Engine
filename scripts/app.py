@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"message": "HRI Engine Running 🚀"}
+    return {"message": "HRI Engine Running"}
 
 
 @app.get("/run-engine")
