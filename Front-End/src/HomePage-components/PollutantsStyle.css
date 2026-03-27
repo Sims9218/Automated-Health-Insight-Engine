@@ -1,0 +1,31 @@
+.PollutantsBox {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 25px;
+    color: white;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: 0.3s ease;
+}
+
+.PollutantsBox:hover {
+    transform: translateY(-5px);
+}
+
+.pollutant-grid {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.pollutant-item {
+    background: rgba(235, 237, 237, 0.733);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #1e293b;
+}
