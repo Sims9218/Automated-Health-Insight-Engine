@@ -1,4 +1,4 @@
-const BASE_URL = "https://YOUR-RENDER-URL.onrender.com"; // 🔁 replace this
+const BASE_URL = "https://automated-health-insight-engine-1368.onrender.com"; 
 
 export const getLatestHRI = async () => {
   try {
