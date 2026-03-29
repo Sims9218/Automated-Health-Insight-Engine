@@ -44,3 +44,8 @@ def get_forecast():
             .limit(24) \
             .execute()
 
+        return data.data
+
+    except Exception as e:
+        return {"error": str(e)}
+
