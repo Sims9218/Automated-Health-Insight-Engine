@@ -4,7 +4,13 @@ from scripts.utils import supabase
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def home():
@@ -29,10 +35,3 @@ def latest_hri():
     except Exception as e:
         return {"error": str(e)}
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # allow frontend
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
