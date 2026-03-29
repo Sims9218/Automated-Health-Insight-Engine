@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import joblib
 from datetime import timedelta, datetime
-from utils import (
+from scripts.utils import (
     MODEL_PATH,
     calculate_hri, get_metric, now_ist, ts_to_ist, API_KEY, supabase
 )
