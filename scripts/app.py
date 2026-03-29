@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from scripts.main_engine import run_engine
-from utils import supabase
+from scripts.utils import supabase
 
 app = FastAPI()
 
