@@ -34,4 +34,16 @@ def latest_hri():
         return data.data
     except Exception as e:
         return {"error": str(e)}
+    
+@app.get("/forecast")
+def get_forecast():
+    try:
+        data = supabase.table("forecast") \
+            .select("*") \
+            .order("timestamp") \
+            .limit(24) \
+            .execute()
 
+        return data.data
+    except Exception as e:
+        return {"error": str(e)}
