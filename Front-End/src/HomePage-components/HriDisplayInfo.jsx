@@ -6,8 +6,17 @@ function HriDisplay() {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        getLatestHRI().then(setData);
-    }, []);
+    getLatestHRI()
+        .then(data => {
+            console.log("API:", data);
+
+            // 👇 FIX: pick one city from array
+            const selected = data.find(item => item.city === "Mumbai") || data[0];
+
+            setData(selected);
+        })
+        .catch(err => console.error(err));
+}, []);
 
     return (
         <div className="HriBox">

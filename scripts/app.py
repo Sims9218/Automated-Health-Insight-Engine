@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from scripts.main_engine import run_engine
 from scripts.utils import supabase
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -27,3 +28,11 @@ def latest_hri():
         return data.data
     except Exception as e:
         return {"error": str(e)}
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
