@@ -22,9 +22,7 @@ function Pollutants(){
                     CO: {data ? data.co : "..."}
                 </div>
 
-                <div className="pollutant-item">
-                    NO: {data ? data.no : "..."}
-                </div>
+                
 
                 <div className="pollutant-item">
                     NO2: {data ? data.no2 : "..."}
@@ -34,10 +32,7 @@ function Pollutants(){
                     O3: {data ? data.o3 : "..."}
                 </div>
 
-                <div className="pollutant-item">
-                    SO2: {data ? data.so2 : "..."}
-                </div>
-
+                
                 <div className="pollutant-item">
                     PM2.5: {data ? data.pm2_5 : "..."}
                 </div>
@@ -46,10 +41,7 @@ function Pollutants(){
                     PM10: {data ? data.pm10 : "..."}
                 </div>
 
-                <div className="pollutant-item">
-                    NH3: {data ? data.nh3 : "..."}
-                </div>
-
+                
             </div>
         </div>
     );
