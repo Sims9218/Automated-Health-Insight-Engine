@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { getLatestHRI } from "../api";
 import "./HriDisplayStyle.css";
 
 function HriDisplay() {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        fetch("https://automated-health-insight-engine-1368.onrender.com//latest-hri") // 🔁 replace with your URL
-            .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                setData(data);
-            })
-            .catch(err => console.error(err));
+        getLatestHRI().then(setData);
     }, []);
 
     return (
@@ -21,7 +16,7 @@ function HriDisplay() {
             {/* City */}
             <h1>{data ? data.city || "Mumbai" : "Loading..."}</h1>
 
-            {/* Optional: show HRI */}
+            {/* HRI */}
             {data && (
                 <p style={{ fontSize: "20px", marginTop: "10px" }}>
                     HRI: {data.hri || "N/A"}
