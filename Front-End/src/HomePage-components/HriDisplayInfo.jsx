@@ -5,7 +5,7 @@ function HriDisplay() {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        fetch("https://hri-backend.onrender.com/latest-hri") // 🔁 replace with your URL
+        fetch("https://automated-health-insight-engine-1368.onrender.com//latest-hri") // 🔁 replace with your URL
             .then(res => res.json())
             .then(data => {
                 console.log(data);
