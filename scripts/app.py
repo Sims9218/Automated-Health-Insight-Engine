@@ -40,10 +40,12 @@ def get_forecast():
     try:
         data = supabase.table("forecast") \
             .select("*") \
+            .eq("city", "Mumbai") \
             .order("timestamp") \
             .limit(24) \
             .execute()
 
         return data.data
+
     except Exception as e:
         return {"error": str(e)}
