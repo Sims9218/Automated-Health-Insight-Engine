@@ -33,3 +33,35 @@ body {
     padding: 0 60px 40px 60px;
 }
 
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  margin: 15px;
+}
+
+.dropdown-container label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.dropdown-container select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.dropdown-container select:hover {
+  border-color: #4CAF50;
+}
+
+.dropdown-container select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+}
