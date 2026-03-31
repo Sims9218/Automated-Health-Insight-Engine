@@ -16,6 +16,8 @@ function HomePage(){
                         <option value="Mumbai">Mumbai</option>
                         <option value="Delhi">Delhi</option>
                         <option value="Hyderabad">Hyderabad</option>
+                        <option value="Bangalore">Hyderabad</option>
+                        <option value="Pune">Hyderabad</option>
                     </select>
                 </div>
 
