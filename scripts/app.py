@@ -23,29 +23,37 @@ def run():
     return {"status": "Engine executed successfully"}
 
 
-@app.get("/latest-hri")
-def latest_hri():
+@app.get("/latest-hri/{city}")
+def latest_hri(city: str):
     try:
-        data = supabase.table("history") \
-            .select("*") \
-            .order("timestamp", desc=True) \
-            .limit(10) \
+        data = (
+            supabase.table("history")
+            .select("*")
+            .eq("city", city)
+            .order("timestamp", desc=True)
+            .limit(1)
             .execute()
-        return data.data
+        )
+
+        return data.data[0]
+
     except Exception as e:
         return {"error": str(e)}
+ 
     
-@app.get("/forecast")
-def get_forecast():
+@app.get("/forecast/{city}")
+def get_forecast(city: str):
     try:
-        data = supabase.table("forecast") \
-            .select("*") \
-            .eq("city", "Mumbai") \
-            .order("timestamp") \
-            .limit(24) \
+        data = (
+            supabase.table("forecast")
+            .select("*")
+            .eq("city", city)
+            .order("timestamp", desc=True)
+            .limit(24)
             .execute()
+        )
 
-        return data.data
+        return list(reversed(data.data))
 
     except Exception as e:
         return {"error": str(e)}
