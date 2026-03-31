@@ -10,11 +10,11 @@ import {
   ResponsiveContainer
 } from "recharts";
 
-function Forecast() {
+function Forecast({city}) {
   const [chartData, setChartData] = useState([]);
 
-  useEffect(() => {
-    fetch("https://automated-health-insight-engine-1368.onrender.com/forecast") 
+  useEffect(() => { 
+    fetch(`https://automated-health-insight-engine-1368.onrender.com/forecast/${city}`)
       .then(res => res.json())
       .then(data => {
         console.log("Forecast:", data);
@@ -29,7 +29,7 @@ function Forecast() {
         setChartData(formatted);
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [city]);
 
   return (
     <div className="Prediction">

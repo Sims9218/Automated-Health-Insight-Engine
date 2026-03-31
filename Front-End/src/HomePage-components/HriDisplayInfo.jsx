@@ -2,21 +2,17 @@ import React, { useEffect, useState } from "react";
 import { getLatestHRI } from "../api";
 import "./HriDisplayStyle.css";
 
-function HriDisplay() {
+function HriDisplay({ city }) {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-    getLatestHRI()
+    getLatestHRI(city)
         .then(data => {
             console.log("API:", data);
-
-            // 👇 FIX: pick one city from array
-            const selected = data.find(item => item.city === "Mumbai") || data[0];
-
-            setData(selected);
+            setData(data);
         })
         .catch(err => console.error(err));
-}, []);
+    }, [city]); 
 
     return (
         <div className="HriBox">

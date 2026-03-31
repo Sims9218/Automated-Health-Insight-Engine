@@ -5,14 +5,12 @@ import { getLatestHRI } from "../api";
 
 
 
-function Pollutants(){
+function Pollutants({city}){
     const [data, setData] = useState(null);
     useEffect(() => {
-    getLatestHRI().then(res => {
-        const selected = res.find(item => item.city === "Mumbai") || res[0];
-        setData(selected);
-    });
-}, []);
+    getLatestHRI(city).then(setData);
+    }, [city]);
+    
     return(
         <div className="PollutantsBox">
             <h1>Pollutants</h1>

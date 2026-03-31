@@ -3,15 +3,12 @@ import "./AqiCardStyle.css";
 import { useEffect, useState } from "react";
 import { getLatestHRI } from "../api";
 
-function AqiCard() {
+function AqiCard({city}) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-      getLatestHRI().then(res => {
-          const selected = res.find(item => item.city === "Mumbai") || res[0];
-          setData(selected);
-      });
-  }, []);
+    getLatestHRI(city).then(setData);
+  }, [city]);
 
 
   return (
