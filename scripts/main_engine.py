@@ -9,7 +9,7 @@ from scripts.utils import (
     calculate_hri, calculate_advice, get_metric,   # [ADDED] calculate_advice import
     now_ist, ts_to_ist, API_KEY, supabase
 )
-
+ 
 POLLUTANTS = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
 WEATHER_COLS = ['temp', 'humidity', 'wind_speed', 'uv_index', 'precip']
 FEATURE_COLS = [f'{p}_lag' for p in POLLUTANTS] + WEATHER_COLS + ['hour']
