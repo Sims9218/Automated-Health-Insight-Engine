@@ -1,98 +1,101 @@
-/* [UPDATED] Matches exact card style used by Forecast, Pollutants, HriBox */
-.Suggestion {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 25px;
-    color: white;
+import React from "react";
+import "./SuggestionBoxStyle.css";
 
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    transition: 0.3s ease;
+// [UPDATED] Removed METRIC_COLORS bg/border overrides — they broke the dark card theme.
+// Styling is now handled entirely by CSS to match other cards.
+
+// Maps each advice layer key to a display label and icon
+const LAYER_META = {
+    air:      { label: "Air Quality", icon: "💨" },
+    temp:     { label: "Temperature", icon: "🌡️" },
+    uv:       { label: "UV Index",    icon: "☀️" },
+    wind:     { label: "Wind",        icon: "🌬️" },
+    precip:   { label: "Rain",        icon: "🌧️" },
+    festival: { label: "Today",       icon: "🎉" },
+};
+
+function SuggestionBox({ hriLabel, advice }) {
+
+    // Build renderable items — skip null layers
+    const items = [];
+
+    if (advice) {
+        // Air layer is an object with .text
+        if (advice.air?.text) {
+            items.push({
+                key: "air",
+                ...LAYER_META.air,
+                text: advice.air.text,
+                extra: advice.air.mask ? "😷 N95 mask recommended" : null,
+            });
+        }
+        // String layers
+        for (const key of ["temp", "uv", "wind", "precip"]) {
+            if (advice[key]) {
+                items.push({ key, ...LAYER_META[key], text: advice[key], extra: null });
+            }
+        }
+        // Festival layer is an object with .name and .advice
+        if (advice.festival) {
+            items.push({
+                key: "festival",
+                icon: LAYER_META.festival.icon,
+                label: advice.festival.name,
+                text: advice.festival.advice,
+                extra: null,
+            });
+        }
+    }
+
+    // Loading state while API hasn't responded yet
+    if (!advice) {
+        return (
+            <div className="Suggestion">
+                <p className="Suggestion-loading">Loading suggestions...</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="Suggestion">
+            {/* Header */}
+            <div className="Suggestion-header">
+                <h1 className="Suggestion-title">
+                    Suggestions
+                    {hriLabel && (
+                        <span className="Suggestion-label"> — {hriLabel}</span>
+                    )}
+                </h1>
+            </div>
+
+            {/* Advice items — only non-null layers render */}
+            <div className="Suggestion-body">
+                {items.map((item, idx) => (
+                    <React.Fragment key={item.key}>
+                        <div className="Suggestion-item">
+                            <span className="Suggestion-item-icon">{item.icon}</span>
+                            <div>
+                                <p className="Suggestion-item-label">{item.label}</p>
+                                <p className="Suggestion-item-text">{item.text}</p>
+                                {item.extra && (
+                                    <p className="Suggestion-item-extra">{item.extra}</p>
+                                )}
+                            </div>
+                        </div>
+                        {idx < items.length - 1 && (
+                            <div className="Suggestion-divider" />
+                        )}
+                    </React.Fragment>
+                ))}
+
+                {items.length === 0 && (
+                    <p className="Suggestion-item-text">
+                        Conditions are comfortable. No specific precautions needed.
+                    </p>
+                )}
+            </div>
+        </div>
+    );
 }
 
-.Suggestion:hover {
-    transform: translateY(-5px);
-}
-
-/* Header */
-.Suggestion-header {
-    margin-bottom: 16px;
-}
-
-.Suggestion-title {
-    font-size: 22px;
-    font-weight: 600;
-    color: white;
-    margin: 0;
-}
-
-/* [ADDED] HRI label next to title */
-.Suggestion-label {
-    font-weight: 400;
-    font-size: 18px;
-    opacity: 0.75;
-}
-
-/* Row of advice items */
-.Suggestion-body {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 0;
-}
-
-/* Each advice block */
-.Suggestion-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    flex: 1;
-    min-width: 180px;
-    padding: 0 20px 0 0;
-}
-
-.Suggestion-item-icon {
-    font-size: 18px;
-    margin-top: 2px;
-    flex-shrink: 0;
-}
-
-.Suggestion-item-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: rgba(255, 255, 255, 0.5);  /* [UPDATED] muted white instead of slate */
-    margin: 0 0 3px 0;
-}
-
-.Suggestion-item-text {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);  /* [UPDATED] white text */
-    margin: 0;
-    line-height: 1.5;
-}
-
-/* Mask badge */
-.Suggestion-item-extra {
-    font-size: 12px;
-    color: #fca5a5;   /* [UPDATED] soft red that works on dark bg */
-    margin: 4px 0 0 0;
-    font-weight: 500;
-}
-
-/* Vertical divider between items */
-.Suggestion-divider {
-    width: 1px;
-    background: rgba(255, 255, 255, 0.15);  /* [UPDATED] subtle on dark bg */
-    align-self: stretch;
-    margin: 0 20px 0 0;
-    flex-shrink: 0;
-}
-
-/* Loading state */
-.Suggestion-loading {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0;
-}
+export default SuggestionBox;
