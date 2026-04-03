@@ -38,26 +38,35 @@ body {
   flex-direction: column;
   width: 200px;
   margin: 15px;
+
+  /* [ADD THESE] matches other cards */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: 0.3s ease;
+}
+
+.dropdown-container:hover {
+  transform: translateY(-5px);
 }
 
 .dropdown-container label {
   font-size: 14px;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);  /* white instead of #666 */
   margin-bottom: 5px;
 }
 
 .dropdown-container select {
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.2);  /* subtle white border */
   font-size: 16px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.15);  /* semi-transparent */
+  color: white;  /* white text */
   cursor: pointer;
   transition: 0.2s ease;
-}
-
-.dropdown-container select:hover {
-  border-color: #4CAF50;
 }
 
 .dropdown-container select:focus {
