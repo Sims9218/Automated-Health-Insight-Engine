@@ -7,7 +7,7 @@ import Pollutants from "./HomePage-components/Pollutants";
 import SuggestionBox from "./HomePage-components/SuggestionBox";
 
 function HomePage() {
-    const [city, setCity] = useState("");
+    const [city, setCity] = useState("Mumbai");
 
     // [ADDED] Lift HRI API response up from HriDisplay
     // so both SuggestionBox and other components can access advice + hriLabel
