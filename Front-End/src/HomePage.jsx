@@ -7,7 +7,7 @@ import Pollutants from "./HomePage-components/Pollutants";
 import SuggestionBox from "./HomePage-components/SuggestionBox";
 
 function HomePage() {
-    const [city, setCity] = useState("Mumbai");
+    const [city, setCity] = useState("");
 
     // [ADDED] Lift HRI API response up from HriDisplay
     // so both SuggestionBox and other components can access advice + hriLabel
@@ -19,18 +19,14 @@ function HomePage() {
                 <div className="Top-left">
                     <div className="dropdown-container">
                         <label>Choose City</label>
-                        <select value={city} onChange={(e) => {
-                            setCity(e.target.value);
-                            // [ADDED] Reset hriData on city change so SuggestionBox
-                            // shows loading state while new city data is fetched
-                            setHriData(null);
-                        }}>
+                        <select value={city} onChange={(e) => setCity(e.target.value)}>
+                            <option value="" disabled>Choose City</option>
                             <option value="Mumbai">Mumbai</option>
                             <option value="Delhi">Delhi</option>
                             <option value="Hyderabad">Hyderabad</option>
                             <option value="Bangalore">Bangalore</option>
                             <option value="Pune">Pune</option>
-                        </select>
+                        </select
                     </div>
 
                     {/* [UPDATED] Pass onHriLoaded callback to capture full API response */}
