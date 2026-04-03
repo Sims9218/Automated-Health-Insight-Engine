@@ -15,8 +15,7 @@ function Forecast({ city }) {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    // [FIXED] Was fetching from friend's old Render URL directly.
-    // Now uses getForecast from api.js so it hits your own backend.
+    
     fetch(`https://automated-health-insight-engine-1368.onrender.com/forecast/${city}`)
   .then(res => res.json()) // ignore the update
       .then(data => {
