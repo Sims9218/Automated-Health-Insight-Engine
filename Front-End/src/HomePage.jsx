@@ -26,7 +26,7 @@ function HomePage() {
                             <option value="Hyderabad">Hyderabad</option>
                             <option value="Bangalore">Bangalore</option>
                             <option value="Pune">Pune</option>
-                        </select
+                        </select>
                     </div>
 
                     {/* [UPDATED] Pass onHriLoaded callback to capture full API response */}
