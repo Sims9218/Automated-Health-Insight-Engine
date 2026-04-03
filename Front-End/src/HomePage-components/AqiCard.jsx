@@ -62,9 +62,7 @@ function AqiCard({ city }) {
                     {/* [FIXED] Use real OWM AQI index (1–5) with readable label
                         Previously was pm2_5 * 10 which was incorrect */}
                     <h3>
-                        {data && data.aqi
-                            ? `${data.aqi} — ${OWM_AQI_LABELS[data.aqi] || "N/A"}`
-                            : "..."}
+                        {data ? Math.round(data.pm2_5 * 10) : "..."}
                     </h3>
                 </div>
 
