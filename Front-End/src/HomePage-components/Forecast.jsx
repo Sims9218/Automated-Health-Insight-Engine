@@ -14,25 +14,21 @@ import {
 function Forecast({ city }) {
   const [chartData, setChartData] = useState([]);
 
-  useEffect(() => {
-    
-    fetch(`https://automated-health-insight-engine-1368.onrender.com/forecast/${city}`)
-  .then(res => res.json()) // ignore the update
-      .then(data => {
-        console.log("Forecast:", data);
-
-        const formatted = data
-          .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-          .map(item => ({
-            hour: item.timestamp.slice(11, 16),   // HH:MM
-            hri:  item.hri
-          }));
-
-        setChartData(formatted);
-      })
-      .catch(err => console.error(err));
-  }, [city]);
-
+useEffect(() => {
+  fetch(`https://automated-health-insight-engine-1368.onrender.com/forecast/${city}`)
+    .then(res => res.json())
+    .then(data => {
+      console.log("Forecast:", data);
+      const formatted = data
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+        .map(item => ({
+          hour: item.timestamp.slice(11, 16),
+          hri: item.hri
+        }));
+      setChartData(formatted);
+    })
+    .catch(err => console.error(err));
+}, [city]);
   return (
     <div className="Prediction">
       <h1>Next-Day Forecast</h1>  {/* [UPDATED] label — data is next-day, not 24hr rolling */}
