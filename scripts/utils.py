@@ -195,15 +195,15 @@ def calculate_advice(aqi_data, weather_data, hri_score, dt=None):
     # --- Layer 2: Temperature ---
     temp = weather_data.get('temp', 25)
     if temp >= 40:
-        advice["temp"] = "Extreme heat — stay hydrated, avoid outdoor activity between 11AM–4PM, wear light clothing."
+        advice["temp"] = "Extreme heat   stay hydrated, avoid outdoor activity between 11AM–4PM, wear light clothing."
     elif temp >= 35:
-        advice["temp"] = "Very hot — drink water frequently, wear sunscreen and light clothing. Limit outdoor exertion."
+        advice["temp"] = "Very hot   drink water frequently, wear sunscreen and light clothing. Limit outdoor exertion."
     elif temp >= 30:
-        advice["temp"] = "Warm day — stay hydrated. Take breaks if exercising outdoors."
+        advice["temp"] = "Warm day   stay hydrated. Take breaks if exercising outdoors."
     elif temp <= 10:
-        advice["temp"] = "Cold weather — dress in layers, keep extremities warm. Elderly and children take extra care."
+        advice["temp"] = "Cold weather   dress in layers, keep extremities warm. Elderly and children take extra care."
     elif temp <= 15:
-        advice["temp"] = "Cool weather — carry a light jacket, especially in the evening."
+        advice["temp"] = "Cool weather   carry a light jacket, especially in the evening."
     else:
         # [ADDED] Return None for comfortable temps — frontend hides this layer
         advice["temp"] = None
@@ -211,24 +211,24 @@ def calculate_advice(aqi_data, weather_data, hri_score, dt=None):
     # --- Layer 3: UV Index ---
     uv = weather_data.get('uv_index', 0)
     if uv >= 11:
-        advice["uv"] = "Extreme UV — stay indoors midday. Wear SPF 50+, hat, UV-blocking sunglasses and full-sleeve clothing."
+        advice["uv"] = "Extreme UV   stay indoors midday. Wear SPF 50+, hat, UV-blocking sunglasses and full-sleeve clothing."
     elif uv >= 8:
-        advice["uv"] = "Very high UV — apply SPF 30+ every 2 hours, wear a hat and sunglasses. Avoid midday sun."
+        advice["uv"] = "Very high UV   apply SPF 30+ every 2 hours, wear a hat and sunglasses. Avoid midday sun."
     elif uv >= 6:
-        advice["uv"] = "High UV — wear sunscreen and a hat if going out between 10AM–3PM."
+        advice["uv"] = "High UV   wear sunscreen and a hat if going out between 10AM–3PM."
     elif uv >= 3:
-        advice["uv"] = "Moderate UV — sunscreen recommended for prolonged outdoor exposure."
+        advice["uv"] = "Moderate UV   sunscreen recommended for prolonged outdoor exposure."
     else:
         advice["uv"] = None  # low UV at night or overcast, no advice needed
 
     # --- Layer 4: Wind Speed ---
     wind = weather_data.get('wind_speed', 3)
     if wind < 2:
-        advice["wind"] = "Very low wind — pollutants are trapped near ground level. Avoid busy main roads and high-traffic areas."
+        advice["wind"] = "Very low wind   pollutants are trapped near ground level. Avoid busy main roads and high-traffic areas."
     elif wind > 10:
-        advice["wind"] = "Strong winds — good for dispersing pollution but avoid exposed areas. Secure loose items outdoors."
+        advice["wind"] = "Strong winds   good for dispersing pollution but avoid exposed areas. Secure loose items outdoors."
     elif wind > 6:
-        advice["wind"] = "Moderate-high winds — air dispersion is good. Outdoor conditions generally fine."
+        advice["wind"] = "Moderate-high winds   air dispersion is good. Outdoor conditions generally fine."
     else:
         advice["wind"] = None  # normal wind, no specific advice
 
@@ -236,11 +236,11 @@ def calculate_advice(aqi_data, weather_data, hri_score, dt=None):
     precip = weather_data.get('precip', 0)
     humidity = weather_data.get('humidity', 50)
     if precip > 5:
-        advice["precip"] = "Heavy rain — carry an umbrella. Roads may be flooded. Avoid waterlogged areas."
+        advice["precip"] = "Heavy rain   carry an umbrella. Roads may be flooded. Avoid waterlogged areas."
     elif precip > 0.5:
-        advice["precip"] = "Light rain expected — carry an umbrella. Air quality will improve as rain washes out pollutants."
+        advice["precip"] = "Light rain expected   carry an umbrella. Air quality will improve as rain washes out pollutants."
     elif humidity > 85:
-        advice["precip"] = "High humidity — feels muggy. Rain possible. Keep an umbrella handy."
+        advice["precip"] = "High humidity   feels muggy. Rain possible. Keep an umbrella handy."
     else:
         advice["precip"] = None  # dry conditions, no advice needed
 
