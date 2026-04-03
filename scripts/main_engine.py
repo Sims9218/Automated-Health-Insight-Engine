@@ -9,7 +9,7 @@ from scripts.utils import (
     calculate_hri, calculate_advice, get_metric,   # [ADDED] calculate_advice import
     now_ist, ts_to_ist, API_KEY, supabase
 )
- 
+
 POLLUTANTS = ['pm2_5', 'pm10', 'no2', 'o3', 'co']
 WEATHER_COLS = ['temp', 'humidity', 'wind_speed', 'uv_index', 'precip']
 FEATURE_COLS = [f'{p}_lag' for p in POLLUTANTS] + WEATHER_COLS + ['hour']
@@ -210,9 +210,6 @@ def run_engine():
                     pred_aqi_dict = dict(zip(POLLUTANTS, preds))
                     f_hri = calculate_hri(pred_aqi_dict, f_weather)
 
-                    # [ADDED] Generate advice for each forecast slot as well
-                    f_advice = calculate_advice(pred_aqi_dict, f_weather, f_hri, dt=f_dt)
-
                     forecast_rows.append({
                         'timestamp': f_dt_str,
                         **pred_aqi_dict,
@@ -220,9 +217,8 @@ def run_engine():
                         'hri':    f_hri,
                         'metric': get_metric(f_hri),
                         'city':   CITY,
-                        # [ADDED] Store serialised advice in forecast row
-                        # Stored as JSON string; app.py will parse it when serving
-                        'advice': str(f_advice),
+                        # [REMOVED] advice no longer stored in forecast rows
+                        # app.py /forecast endpoint selects explicit columns, advice recalculated via /latest-hri
                     })
 
                 last_pollutants = preds
