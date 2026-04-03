@@ -248,4 +248,4 @@ def calculate_advice(aqi_data, weather_data, hri_score, dt=None):
     # [ADDED] Checks today's date against festival calendar
     advice["festival"] = get_festival_advice(dt)
 
-    return advice
+    return advice 
