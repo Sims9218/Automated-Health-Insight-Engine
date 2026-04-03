@@ -21,7 +21,7 @@ function HomePage() {
                         <label>Choose City</label>
                         <select value={city} onChange={(e) => setCity(e.target.value)}>
                             <option value="" disabled>Choose City</option>
-                            <option value="Mumbai">Mumbai</option>
+                            <option value="Mumbai">Mumbaii</option>
                             <option value="Delhi">Delhi</option>
                             <option value="Hyderabad">Hyderabad</option>
                             <option value="Bangalore">Bangalore</option>
