@@ -22,7 +22,7 @@
 .Suggestion-title {
     font-size: 22px;
     font-weight: 600;
-    color: white;
+    color: black;
     margin: 0;
 }
 
@@ -84,7 +84,7 @@
 /* Vertical divider between items */
 .Suggestion-divider {
     width: 1px;
-    background: rgba(255, 255, 255, 0.15);  /* [UPDATED] subtle on dark bg */
+    background: rgba(249, 246, 246, 0.11); 
     align-self: stretch;
     margin: 0 20px 0 0;
     flex-shrink: 0;
