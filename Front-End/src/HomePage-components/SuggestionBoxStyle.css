@@ -68,7 +68,7 @@
 
 .Suggestion-item-text {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);  /* [UPDATED] white text */
+    color: rgba(10, 1, 1, 0.9);  /* [UPDATED] white text */
     margin: 0;
     line-height: 1.5;
 }
