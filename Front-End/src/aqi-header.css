@@ -22,7 +22,7 @@ header h1 {
 .btn {
     background: white;
     border: 1px solid rgba(0,0,0,0.1);
-    padding: 4px 18px;
+    padding: 8px 18px;
     border-radius: 25px;
     font-weight: 500;
     color: #1e293b;
