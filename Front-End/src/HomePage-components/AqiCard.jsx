@@ -12,37 +12,38 @@ const METRIC_COLORS = {
     Hazardous: "#7c3aed",
 };
 
+// [FIXED] Scale bands matching 0-60, 60-120, 120-180, 180-240, 240-300, 300+
 const SCALE_BANDS = [
-    { max: 100,      label: "Good",      color: "#22c55e" },
-    { max: 200,      label: "Moderate",  color: "#eab308" },
-    { max: 300,      label: "Poor",      color: "#f97316" },
-    { max: 500,      label: "Unhealthy", color: "#ef4444" },
-    { max: 750,      label: "Severe",    color: "#b91c1c" },
-    { max: Infinity, label: "Hazardous", color: "#7c3aed" },
+    { min: 0,   max: 60,       label: "Good",      color: "#22c55e" },
+    { min: 60,  max: 120,      label: "Moderate",  color: "#eab308" },
+    { min: 120, max: 180,      label: "Poor",      color: "#f97316" },
+    { min: 180, max: 240,      label: "Unhealthy", color: "#ef4444" },
+    { min: 240, max: 300,      label: "Severe",    color: "#b91c1c" },
+    { min: 300, max: Infinity, label: "Hazardous", color: "#7c3aed" },
 ];
 
-const SCALE_MAX = 750;
+const SCALE_MAX = 300; // [FIXED] cap at 300 since 300+ is last band
 
-// [ADDED] Inline SVG icons — no emoji, no external dependency
+// [FIXED] SVG icons with explicit fill="none" to prevent pink fill from global CSS
 const HumidityIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2C12 2 5 10 5 14a7 7 0 0 0 14 0c0-4-7-12-7-12z"/>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+        <path d="M12 2C12 2 5 10 5 14a7 7 0 0 0 14 0c0-4-7-12-7-12z" fill="none"/>
     </svg>
 );
 
 const WindIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9.59 4.59A2 2 0 1 1 11 8H2"/>
-        <path d="M12.59 19.41A2 2 0 1 0 14 16H2"/>
-        <path d="M6.59 11.41A2 2 0 1 0 8 8H2"/>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+        <path d="M9.59 4.59A2 2 0 1 1 11 8H2" fill="none"/>
+        <path d="M12.59 19.41A2 2 0 1 0 14 16H2" fill="none"/>
+        <path d="M6.59 11.41A2 2 0 1 0 8 8H2" fill="none" />
     </svg>
 );
 
 const PrecipIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/>
-        <line x1="8" y1="19" x2="8" y2="21"/>
-        <line x1="8" y1="13" x2="8" y2="15"/>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
+        <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25" fill="none"/>
+        <line x1="8"  y1="19" x2="8"  y2="21"/>
+        <line x1="8"  y1="13" x2="8"  y2="15"/>
         <line x1="16" y1="19" x2="16" y2="21"/>
         <line x1="16" y1="13" x2="16" y2="15"/>
         <line x1="12" y1="21" x2="12" y2="23"/>
@@ -58,6 +59,8 @@ function AqiCard({ city }) {
     }, [city]);
 
     const circleColor = data ? (METRIC_COLORS[data.metric] || "#22c55e") : "#22c55e";
+
+    // [FIXED] Clamp to SCALE_MAX for marker, position is % of 300
     const hri = data ? Math.min(Math.round(data.hri), SCALE_MAX) : 0;
     const markerPct = (hri / SCALE_MAX) * 100;
 
@@ -78,32 +81,35 @@ function AqiCard({ city }) {
                 <div className="scale-wrap">
                     <div className="scale-bar">
                         {SCALE_BANDS.map((band, i) => {
-                            const prev = i === 0 ? 0 : SCALE_BANDS[i - 1].max;
-                            const curr = Math.min(band.max, SCALE_MAX);
-                            const width = ((curr - prev) / SCALE_MAX) * 100;
+                            // Each band is equal width since bands are 60 units each (300/5 = 60, last is 300+)
+                            const width = (1 / SCALE_BANDS.length) * 100;
                             return (
                                 <div
                                     key={band.label}
-                                    className="scale-segment"
+                                    className={`scale-segment ${i === 0 ? 'first' : ''} ${i === SCALE_BANDS.length - 1 ? 'last' : ''}`}
                                     style={{ width: `${width}%`, background: band.color }}
                                 />
                             );
                         })}
                         {data && (
-                            <div className="scale-marker" style={{ left: `${markerPct}%` }} />
+                            <div
+                                className="scale-marker"
+                                style={{ left: `calc(${markerPct}% - 1px)` }}
+                            />
                         )}
                     </div>
                     <div className="scale-labels">
                         <span>0</span>
-                        <span>100</span>
-                        <span>200</span>
-                        <span>300</span>
-                        <span>500</span>
-                        <span>750+</span>
+                        <span>60</span>
+                        <span>120</span>
+                        <span>180</span>
+                        <span>240</span>
+                        <span>300+</span>
                     </div>
                 </div>
             </div>
 
+            {/* AQI */}
             <div className="Mid-side">
                 <p className="card-label">AQI</p>
                 <h3 className="card-value">
@@ -111,11 +117,10 @@ function AqiCard({ city }) {
                 </h3>
             </div>
 
+            {/* Weather */}
             <div className="Right-side">
                 <p className="card-label">Weather</p>
                 <h3 className="card-value">{data ? `${data.temp}°C` : "..."}</h3>
-
-                {/* [UPDATED] SVG icons instead of emojis */}
                 <div className="weather-sub">
                     <div className="weather-sub-item">
                         <HumidityIcon />
