@@ -10,7 +10,6 @@ function HeaderBar({ city, setCity }) {
       <div id="header-button">
             <div className="dropdown-container">
                         <select value={city} onChange={(e) => setCity(e.target.value)}>
-                            <option value="" disabled>Choose City</option>
                             <option value="Mumbai">Mumbai</option>
                             <option value="Delhi">Delhi</option>
                             <option value="Hyderabad">Hyderabad</option>

@@ -46,7 +46,6 @@ header h1 {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
   border-radius: 18px;
-  padding: 20px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   transition: 0.3s ease;
 }
@@ -72,8 +71,3 @@ header h1 {
   transition: 0.2s ease;
 }
 
-.dropdown-container select:focus {
-  outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
-}
