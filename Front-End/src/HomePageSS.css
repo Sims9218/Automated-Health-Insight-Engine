@@ -1,15 +1,13 @@
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    /* [UNCHANGED] keeping original light gradient from App.css */
 }
 
-/* Main containers */
 .Top-Container {
     display: flex;
     justify-content: space-between;
-    align-items: stretch;
-    gap: 20px;
+    align-items: flex-start;   /* [UPDATED] align to top so both start at same height */
+    gap: 24px;
     padding: 30px 60px;
 }
 
@@ -17,23 +15,69 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    flex: 1;
+    flex: 0 0 auto;   /* [UPDATED] don't stretch — AqiCard has fixed width */
 }
 
+/* [UPDATED] SuggestionBox takes remaining space beside AqiCard */
 .Top-right {
     flex: 1;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    align-items: stretch;
+}
+
+/* SuggestionBox fills the full height of Top-right */
+.Top-right .Suggestion {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .Bottom-Container {
     display: flex;
     gap: 20px;
-    padding: 0 60px 30px 60px; /* [UPDATED] reduced bottom padding, SuggestionBox follows */
+    padding: 0 60px 40px 60px;
 }
 
-/* [ADDED] Full-width wrapper for the suggestion strip */
-.Suggestion-Container {
-    padding: 0 60px 40px 60px;
+/* Dropdown kept in HeaderBar now, no longer here */
+.dropdown-container {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    margin: 15px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: 0.3s ease;
+}
+
+.dropdown-container:hover {
+    transform: translateY(-5px);
+}
+
+.dropdown-container label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 5px;
+}
+
+.dropdown-container select {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 16px;
+    background-color: rgba(15, 32, 39, 0.8);
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.dropdown-container select:hover {
+    border-color: #4CAF50;
+}
+
+.dropdown-container select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
 }
