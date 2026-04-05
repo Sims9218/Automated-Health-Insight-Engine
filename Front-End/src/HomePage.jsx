@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AqiCard from "./HomePage-components/AqiCard";
 import "./HomePageSS.css";
 import HriDisplay from "./HomePage-components/HriDisplayInfo";
