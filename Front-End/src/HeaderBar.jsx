@@ -20,7 +20,6 @@ function HeaderBar({ city, setCity }) {
                     </div>
 
         <button className="btn no-margin">About</button>
-        <button className="btn">More About</button>
       </div>
     </header>
   );
