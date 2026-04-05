@@ -43,7 +43,7 @@ def train_model():
     y = df[pollutants]
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.1, shuffle=False
+        X, y, test_size=0.2, shuffle=False
     )
 
     model = MultiOutputRegressor(
