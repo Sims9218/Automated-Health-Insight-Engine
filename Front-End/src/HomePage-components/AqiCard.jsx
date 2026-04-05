@@ -72,7 +72,7 @@ function AqiCard({ city }) {
                         {data ? Math.round(data.hri) : "..."}
                     </div>
                     <div className="health-info">
-                        <p>Health Risk Index</p>
+                        <p>Health Risk Index of {city}</p>
                         <h2>{data ? data.metric : "..."}</h2>
                     </div>
                 </div>
