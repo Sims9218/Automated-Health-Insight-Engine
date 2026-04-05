@@ -3,11 +3,14 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    /* [REMOVED] hardcoded gradient — HomePage now applies dynamic gradient based on HRI */
+    /* [UPDATED] Default gradient — overridden dynamically via inline style in App.jsx */
+    background: linear-gradient(135deg, #eef2ff 0%, #dbeafe 50%, #f1f5f9 100%);
+    transition: background 0.8s ease;
 }
 
 body {
     color: #1e293b;
+    margin: 0;
 }
 
 h1, h2, h3 {
