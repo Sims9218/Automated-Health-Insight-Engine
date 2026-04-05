@@ -37,8 +37,8 @@ useEffect(() => {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="hour" stroke="rgba(255,255,255,0.5)" />
-            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <XAxis dataKey="hour" stroke="rgba(0,0,0,0.5)" />
+            <YAxis stroke="rgba(0,0,0,0.5)" />
             <Tooltip
               contentStyle={{
                 background: "rgba(15,32,39,0.9)",
