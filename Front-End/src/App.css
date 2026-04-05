@@ -1,29 +1,19 @@
 .App {
-  min-height: 100vh;
-  width: 100%;
-
-  background: linear-gradient(
-    135deg,
-    #eef2ff 0%,
-    #dbeafe 50%,
-    #f1f5f9 100%
-  );
-
-  display: flex;
-  flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* [REMOVED] hardcoded gradient — HomePage now applies dynamic gradient based on HRI */
 }
 
-/* Global text color */
 body {
-  color: #1e293b;   /* dark slate */
+    color: #1e293b;
 }
 
-/* Headings */
 h1, h2, h3 {
-  color: #1e293b;
+    color: #1e293b;
 }
 
-/* Secondary text */
 p, span {
-  color: #64748b;   /* muted gray */
+    color: #64748b;
 }
