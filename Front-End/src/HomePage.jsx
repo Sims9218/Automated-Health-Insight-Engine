@@ -1,15 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";  // ← add useEffect
 import AqiCard from "./HomePage-components/AqiCard";
 import "./HomePageSS.css";
 import HriDisplay from "./HomePage-components/HriDisplayInfo";
 import Forecast from "./HomePage-components/Forecast";
 import Pollutants from "./HomePage-components/Pollutants";
 import SuggestionBox from "./HomePage-components/SuggestionBox";
+import { getLatestHRI } from "./api"; // ← adjust path if needed
 
-function HomePage({city}) {
-    // [ADDED] Lift HRI API response up from HriDisplay
-    // so both SuggestionBox and other components can access advice + hriLabel
+function HomePage({ city }) {
     const [hriData, setHriData] = useState(null);
+    useEffect(() => {
+        const fetchHRI = async () => {
+            const data = await getLatestHRI(city);
+            setHriData(data);
+        };
+
+        if (city) {
+            fetchHRI();
+        }
+    }, [city]);
 
     return (
         <div>
@@ -22,7 +31,6 @@ function HomePage({city}) {
                 <Pollutants city={city} />
             </div>
 
-            {/* [ADDED] Full-width suggestion strip — receives advice object from API */}
             <div className="Suggestion-Container">
                 <SuggestionBox
                     hriLabel={hriData?.metric}
