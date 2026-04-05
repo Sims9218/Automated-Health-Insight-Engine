@@ -36,24 +36,6 @@ header h1 {
 }
 
 
-.dropdown-container {
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-  margin: 0;
-
-  /* [ADD THESE] matches other cards */
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-  padding:10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  transition: 0.3s ease;
-}
-
-.dropdown-container:hover {
-  transform: translateY(-5px);
-}
 
 .dropdown-container label {
   font-size: 14px;
