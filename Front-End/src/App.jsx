@@ -4,7 +4,7 @@ import HomePage from "./HomePage";
 import "./App.css";
 
 function App() {
-  const [city, setCity] = useState("");  // ← ADDED
+  const [city, setCity] = useState("Mumbai");  // ← ADDED
 
   return (
     <div className="App">
