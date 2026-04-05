@@ -4,6 +4,8 @@ import HomePage from "./HomePage";
 import "./App.css";
 
 function App() {
+  const [city, setCity] = useState("");  // ← ADDED
+
   return (
     <div className="App">
       <HeaderBar city={city} setCity={setCity} />
