@@ -34,42 +34,46 @@ function AqiCard({ city }) {
 
     return (
         <div className="aqi-card">
-            {/* Top Section */}
-            <div className="aqi-top">
-                <div
-                    className="hri-circle"
-                    // [UPDATED] Colour is now dynamic based on HRI level
-                    style={{ background: circleColor }}
-                >
-                    {/* [FIXED] Show actual HRI score, not hri/10
-                        HRI is already on a 0–500 scale. We round to nearest integer. */}
-                    {data ? Math.round(data.hri) : "..."}
+           <div className="Left-side"> {/* Left side of the box */}
+                {/* Top Section */}
+                <div className="aqi-top">
+                    <div
+                        className="hri-circle"
+                        // [UPDATED] Colour is now dynamic based on HRI level
+                        style={{ background: circleColor }}
+                    >
+                        {/* [FIXED] Show actual HRI score, not hri/10
+                            HRI is already on a 0–500 scale. We round to nearest integer. */}
+                        {data ? Math.round(data.hri) : "..."}
+                    </div>
+
+                    <div className="health-info">
+                        <p>Health Risk Index</p>
+                        <h2>{data ? data.metric : "..."}</h2>
+                    </div>
                 </div>
 
-                <div className="health-info">
-                    <p>Health Risk Index</p>
-                    <h2>{data ? data.metric : "..."}</h2>
+                {/* Bottom Section */}
+                <div className="aqi-bottom">
+                    <p>Scale</p>
                 </div>
+            </div>  
+
+            <div className="Mid-side">
+                <p>AQI</p>
+                {/* [FIXED] Use real OWM AQI index (1–5) with readable label
+                 Previously was pm2_5 * 10 which was incorrect */}
+                <h3>
+                    {data ? Math.round(data.pm2_5 * 10) : "..."}
+                </h3>
             </div>
 
-            {/* Divider */}
-            <div className="aqi-divider"></div>
-
-            {/* Bottom Section */}
-            <div className="aqi-bottom">
-                <div className="aqi-item">
-                    <p>AQI</p>
-                    {/* [FIXED] Use real OWM AQI index (1–5) with readable label
-                        Previously was pm2_5 * 10 which was incorrect */}
-                    <h3>
-                        {data ? Math.round(data.pm2_5 * 10) : "..."}
-                    </h3>
-                </div>
-
+            <div className="Right-side">
                 <div className="aqi-item">
                     <p>Weather</p>
                     <h3>{data ? `${data.temp}°C` : "..."}</h3>
                 </div>
+            
             </div>
         </div>
     );
