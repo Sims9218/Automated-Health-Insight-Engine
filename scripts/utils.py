@@ -81,16 +81,19 @@ def calculate_hri(aqi_data, weather_data):
     return round(hri_score * 100, 2)
 
 
-# --- HRI CATEGORY + SUGGESTIONS ---
-# Average day ~270, bad days ~500+.
+
+
 HRI_LEVELS = [
-    (75,  "Good",      "Air quality is healthy. No precautions needed."),
-    (150, "Moderate",  "Acceptable air quality. Sensitive individuals should limit prolonged outdoor exposure."),
-    (250, "Poor",      "Wear an N95 mask outdoors. Reduce prolonged exertion."),
-    (350, "Unhealthy", "Wear an N95 mask. Avoid heavy outdoor exercise like running or cycling."),
-    (500, "Severe",    "Minimise all outdoor activity. Keep windows closed."),
-    (float('inf'), "Hazardous", "Avoid all outdoor activity. Stay indoors with air purifiers running."),
+    (100, "Good",      "Air quality is satisfactory. Ideal for outdoor activities and exercise."),
+    (200, "Moderate",  "Acceptable air quality. Sensitive individuals (children, elderly, asthmatics) should consider reducing heavy outdoor exertion."),
+    (300, "Poor",      "Pollution may cause discomfort. Use a mask in high-traffic areas; sensitive groups should move activities indoors."),
+    (500, "Unhealthy", "Increased health risk for all. Wear an N95 mask; avoid running or cycling outdoors. Keep windows closed."),
+    (750, "Severe",    "High health impact. Stay indoors. Use air purifiers and keep doors/windows shut tightly."),
+    (float('inf'), "Hazardous", "Emergency conditions. Avoid all outdoor physical activity. Use medical-grade air filtration if available."),
 ]
+
+
+
 
 def get_metric(hri):
     """Returns the HRI category label for a given HRI score."""
