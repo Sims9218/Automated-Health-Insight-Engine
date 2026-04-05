@@ -1,7 +1,7 @@
 .aqi-card {
     display: flex;
-    width: 700px;
-    padding: 32px;
+    width: 820px;        /* [UPDATED] wider for better spacing */
+    padding: 36px;       /* [UPDATED] more breathing room */
     border-radius: 22px;
     background: #ffffff;
     box-shadow:
@@ -9,6 +9,7 @@
         0 15px 30px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.6);
     transition: all 0.35s ease;
+    gap: 0;
 }
 
 .aqi-card:hover {
@@ -19,10 +20,11 @@
 }
 
 .Left-side {
-    flex: 2;
+    flex: 2.5;           /* [UPDATED] slightly more room for scale */
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
+    padding-right: 32px;
 }
 
 .aqi-top {
@@ -60,19 +62,17 @@
     font-weight: 600;
 }
 
-/* [ADDED] Scale bar wrapper */
+/* Scale bar */
 .scale-wrap {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding-right: 16px;
+    gap: 6px;
 }
 
-/* [ADDED] Coloured band row */
 .scale-bar {
     position: relative;
     display: flex;
-    height: 8px;
+    height: 10px;        /* [UPDATED] slightly taller */
     border-radius: 6px;
     overflow: visible;
 }
@@ -81,23 +81,22 @@
     height: 100%;
 }
 
-/* Round first and last segment */
-.scale-segment:first-child { border-radius: 6px 0 0 6px; }
-.scale-segment:last-child  { border-radius: 0 6px 6px 0; }
+.scale-segment.first { border-radius: 6px 0 0 6px; }
+.scale-segment.last  { border-radius: 0 6px 6px 0; }
 
-/* [ADDED] Triangle marker showing current HRI position */
+/* Triangle marker */
 .scale-marker {
     position: absolute;
-    top: -5px;
+    top: -6px;
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 10px solid #1e293b;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 11px solid #1e293b;
+    pointer-events: none;
 }
 
-/* [ADDED] Numeric labels below scale */
 .scale-labels {
     display: flex;
     justify-content: space-between;
@@ -106,6 +105,7 @@
     padding: 0 2px;
 }
 
+/* Mid — AQI */
 .Mid-side {
     flex: 1;
     display: flex;
@@ -114,51 +114,46 @@
     justify-content: center;
     border-left: 1px solid #e5e7eb;
     border-right: 1px solid #e5e7eb;
-    padding: 0 24px;
+    padding: 0 36px;     /* [UPDATED] more padding so AQI number breathes */
 }
 
+/* Right — Weather */
 .Right-side {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;   /* [UPDATED] left-align for cleaner look */
     justify-content: center;
-    padding: 0 16px;
+    padding: 0 0 0 32px;
     gap: 4px;
 }
 
-/* Shared label/value styles */
 .card-label {
-    font-size: 12px;
+    font-size: 11px;
     color: #6b7280;
-    margin: 0;
+    margin: 0 0 2px 0;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .card-value {
-    font-size: 22px;
-    margin: 4px 0 8px 0;
+    font-size: 26px;     /* [UPDATED] bigger */
+    margin: 0 0 10px 0;
     color: #111827;
     font-weight: 600;
 }
 
-/* [ADDED] Sub-weather rows — humidity, wind, precip */
+/* Sub-weather rows */
 .weather-sub {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 100%;
+    gap: 6px;
 }
 
 .weather-sub-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     font-size: 13px;
-    color: #374151;
-}
-
-.weather-sub-icon {
-    font-size: 14px;
+    color: #6b7280;
 }
