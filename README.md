@@ -206,16 +206,20 @@ http://localhost:8000/run-engine
 
 ## Author
 
-**Your Name**
-(Your College / Department)
+**Vijval Nair**
+**Rajvardhan Nalawade**
+**Akshit Singh**
+**Simarjit Banka**
+
+
 
 ---
 
-## ⭐ Project Highlights
+##  Project Highlights
 
-✔ End-to-end MLOps pipeline
-✔ Automated retraining + model promotion
-✔ Real-time + predictive system
-✔ Fully containerized and deployable
+ End-to-end MLOps pipeline
+ Automated retraining + model promotion
+ Real-time + predictive system
+ Fully containerized and deployable
 
 ---
