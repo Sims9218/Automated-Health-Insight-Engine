@@ -84,12 +84,12 @@ def calculate_hri(aqi_data, weather_data):
 
 
 HRI_LEVELS = [
-    (100, "Good",      "Air quality is satisfactory. Ideal for outdoor activities and exercise."),
-    (200, "Moderate",  "Acceptable air quality. Sensitive individuals (children, elderly, asthmatics) should consider reducing heavy outdoor exertion."),
-    (300, "Poor",      "Pollution may cause discomfort. Use a mask in high-traffic areas; sensitive groups should move activities indoors."),
-    (500, "Unhealthy", "Increased health risk for all. Wear an N95 mask; avoid running or cycling outdoors. Keep windows closed."),
-    (750, "Severe",    "High health impact. Stay indoors. Use air purifiers and keep doors/windows shut tightly."),
-    (float('inf'), "Hazardous", "Emergency conditions. Avoid all outdoor physical activity. Use medical-grade air filtration if available."),
+    (60,  "Good",      "Great day to be outside! The air is clean and safe for everyone."),
+    (120, "Moderate",  "Generally fine, but sensitive groups should take short breaks during outdoor activities."),
+    (180, "Poor",      "Air is becoming hazy. Sensitive individuals should avoid prolonged outdoor exposure. Consider a mask if near traffic."),
+    (240, "Unhealthy", "Pollution is high. Wear an N95 mask for outdoor commutes. Avoid heavy cardio (running/sports) outside."),
+    (300, "Severe",    "Heavy smog detected. Stay indoors as much as possible. If you must go out, use a high-quality N95 mask."),
+    (float('inf'), "Hazardous", "Critical air levels. Keep all windows closed, use air purifiers, and strictly avoid outdoor exposure."),
 ]
 
 
@@ -157,41 +157,41 @@ def calculate_advice(aqi_data, weather_data, hri_score, dt=None):
     advice = {}
 
     # --- Layer 1: Air Quality ---
-    # Based on HRI thresholds from HRI_LEVELS
-    if hri_score < 75:
+    # Based on the new 60-point interval thresholds
+    if hri_score < 60:
         advice["air"] = {
             "label": "Good",
-            "text": "Air quality is healthy. No precautions needed.",
+            "text": "Great day to be outside! The air is clean and safe for everyone.",
             "mask": False
         }
-    elif hri_score < 150:
+    elif hri_score < 120:
         advice["air"] = {
             "label": "Moderate",
-            "text": "Air quality is acceptable. Sensitive groups (asthma, elderly) should limit prolonged outdoor time.",
+            "text": "Generally fine, but sensitive groups should take short breaks during outdoor activities.",
             "mask": False
         }
-    elif hri_score < 250:
+    elif hri_score < 180:
         advice["air"] = {
             "label": "Poor",
-            "text": "Air quality is poor. Wear an N95 mask outdoors and reduce prolonged exertion.",
-            "mask": True
+            "text": "Air is becoming hazy. Sensitive individuals should avoid prolonged outdoor exposure. Consider a mask if near traffic.",
+            "mask": "Optional"
         }
-    elif hri_score < 350:
+    elif hri_score < 240:
         advice["air"] = {
             "label": "Unhealthy",
-            "text": "Unhealthy air. Wear N95 mask. Avoid running, cycling, or heavy outdoor exercise.",
+            "text": "Pollution is high. Wear an N95 mask for outdoor commutes. Avoid heavy cardio (running/sports) outside.",
             "mask": True
         }
-    elif hri_score < 500:
+    elif hri_score < 300:
         advice["air"] = {
             "label": "Severe",
-            "text": "Severe pollution. Minimise all outdoor activity. Keep windows closed.",
+            "text": "Heavy smog detected. Stay indoors as much as possible. If you must go out, use a high-quality N95 mask.",
             "mask": True
         }
     else:
         advice["air"] = {
             "label": "Hazardous",
-            "text": "Hazardous air. Avoid all outdoor activity. Stay indoors with air purifiers running.",
+            "text": "Critical air levels. Keep all windows closed, use air purifiers, and strictly avoid outdoor exposure.",
             "mask": True
         }
 
