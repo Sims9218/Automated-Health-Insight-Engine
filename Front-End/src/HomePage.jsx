@@ -17,17 +17,6 @@ function HomePage() {
         <div>
             <div className="Top-Container">
                 <div className="Top-left">
-                    <div className="dropdown-container">
-                        <select value={city} onChange={(e) => setCity(e.target.value)}>
-                            <option value="" disabled>Choose City</option>
-                            <option value="Mumbai">Mumbai</option>
-                            <option value="Delhi">Delhi</option>
-                            <option value="Hyderabad">Hyderabad</option>
-                            <option value="Bangalore">Bangalore</option>
-                            <option value="Pune">Pune</option>
-                        </select>
-                    </div>
-
                     {/* [UPDATED] Pass onHriLoaded callback to capture full API response */}
                     <HriDisplay city={city} onHriLoaded={setHriData} />
                 </div>
