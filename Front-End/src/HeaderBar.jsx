@@ -18,7 +18,9 @@ function HeaderBar({ city, setCity }) {
                         </select>
                     </div>
 
-        <button className="btn no-margin">About</button>
+        <button className="btn no-margin" onClick={() => window.open("https://github.com/Sims9218/Automated-Health-Insight-Engine", "_blank")}>
+  About
+</button>
       </div>
     </header>
   );
