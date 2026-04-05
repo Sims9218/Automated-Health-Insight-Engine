@@ -21,7 +21,7 @@ header h1 {
 .btn {
     background: white;
     border: 1px solid rgba(0,0,0,0.1);
-    padding: 8px 18px;
+    padding: 4px 18px;
     border-radius: 25px;
     font-weight: 500;
     color: #1e293b;
@@ -32,4 +32,47 @@ header h1 {
 .btn:hover {
     background: #1e293b;
     color: white;
+}
+
+
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  margin: 15px;
+
+  /* [ADD THESE] matches other cards */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transition: 0.3s ease;
+}
+
+.dropdown-container:hover {
+  transform: translateY(-5px);
+}
+
+.dropdown-container label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);  /* white instead of #666 */
+  margin-bottom: 5px;
+}
+
+.dropdown-container select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 16px;
+  background-color: rgba(15, 32, 39, 0.8);
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.dropdown-container select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
 }
