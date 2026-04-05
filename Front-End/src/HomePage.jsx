@@ -6,7 +6,7 @@ import Forecast from "./HomePage-components/Forecast";
 import Pollutants from "./HomePage-components/Pollutants";
 import SuggestionBox from "./HomePage-components/SuggestionBox";
 
-function HomePage(city) {
+function HomePage({city}) {
     // [ADDED] Lift HRI API response up from HriDisplay
     // so both SuggestionBox and other components can access advice + hriLabel
     const [hriData, setHriData] = useState(null);
