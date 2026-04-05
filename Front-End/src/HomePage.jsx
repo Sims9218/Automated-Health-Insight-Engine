@@ -1,32 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import AqiCard from "./HomePage-components/AqiCard";
-import "./HomePageSS.css"
+import "./HomePageSS.css";
 import HriDisplay from "./HomePage-components/HriDisplayInfo";
-import SuggestionBox from "./HomePage-components/SuggestionBox";
 import Forecast from "./HomePage-components/Forecast";
 import Pollutants from "./HomePage-components/Pollutants";
+import SuggestionBox from "./HomePage-components/SuggestionBox";
 
-function HomePage(){
-    return(
-           <div>
-                <div className="Top-Container">
-                    <div className="Top-left">
-                        <HriDisplay />
-                    
-                        <SuggestionBox />
-                    </div>
-                
-                    <div className="Top-right">
-                        <AqiCard />
-                    </div> 
+function HomePage(city) {
+    // [ADDED] Lift HRI API response up from HriDisplay
+    // so both SuggestionBox and other components can access advice + hriLabel
+    const [hriData, setHriData] = useState(null);
+
+    return (
+        <div>
+            <div className="Top-Container">
+                <div className="Top-left">
+                    {/* [UPDATED] Pass onHriLoaded callback to capture full API response */}
+                    <HriDisplay city={city} onHriLoaded={setHriData} />
                 </div>
-                
-                <div className="Bottom-Container">
-                    <Forecast />
-                    <Pollutants />
+
+                <div className="Top-right">
+                    <AqiCard city={city} />
                 </div>
-           </div>
-          
+            </div>
+
+            <div className="Bottom-Container">
+                <Forecast city={city} />
+                <Pollutants city={city} />
+            </div>
+
+            {/* [ADDED] Full-width suggestion strip — receives advice object from API */}
+            <div className="Suggestion-Container">
+                <SuggestionBox
+                    hriLabel={hriData?.metric}
+                    advice={hriData?.advice}
+                />
+            </div>
+        </div>
     );
 }
 
