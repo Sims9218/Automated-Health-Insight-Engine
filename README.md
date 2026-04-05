@@ -204,12 +204,12 @@ http://localhost:8000/run-engine
 
 ---
 
-## Author
+## Authors
 
-**Vijval Nair**
-**Rajvardhan Nalawade**
-**Akshit Singh**
-**Simarjit Banka**
+-**Vijval Nair**
+-**Rajvardhan Nalawade**
+-**Akshit Singh**
+-**Simarjit Banka**
 
 
 
