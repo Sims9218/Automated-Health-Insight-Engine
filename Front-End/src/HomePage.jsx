@@ -14,14 +14,7 @@ function HomePage({city}) {
     return (
         <div>
             <div className="Top-Container">
-                <div className="Top-left">
-                    {/* [UPDATED] Pass onHriLoaded callback to capture full API response */}
-                    <HriDisplay city={city} onHriLoaded={setHriData} />
-                </div>
-
-                <div className="Top-right">
-                    <AqiCard city={city} />
-                </div>
+                <AqiCard />
             </div>
 
             <div className="Bottom-Container">
