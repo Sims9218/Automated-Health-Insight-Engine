@@ -18,7 +18,6 @@ function HomePage() {
             <div className="Top-Container">
                 <div className="Top-left">
                     <div className="dropdown-container">
-                        <label>Choose City</label>
                         <select value={city} onChange={(e) => setCity(e.target.value)}>
                             <option value="" disabled>Choose City</option>
                             <option value="Mumbai">Mumbai</option>
