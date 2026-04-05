@@ -1,8 +1,8 @@
 import React,{useState} from "react";
 import "./aqi-header.css";
 
-function HeaderBar() {
-  const [city, setCity] = useState("Mumbai");
+function HeaderBar({ city, setCity }) {
+
   return (
     <header>
       <h1>Air-Quality</h1>
