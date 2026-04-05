@@ -14,7 +14,7 @@ function HomePage({city}) {
     return (
         <div>
             <div className="Top-Container">
-                <AqiCard />
+                <AqiCard city={city}/>
             </div>
 
             <div className="Bottom-Container">
